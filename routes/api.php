@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\UserController;
@@ -24,6 +25,9 @@ Route::get('/search', [JobController::class, 'search']);
 Route::middleware('auth:api')->group(function ()
 {
     Route::post('/logout', [SessionController::class, 'logout']);
+
+    //Routes for JOB APPLICATION
+    Route::post('/submit-job-application', [JobApplicationController::class, 'submitApplication']);
     Route::middleware([AdminCheck::class])->group(function ()
     {
         //Routes for JOBLISTING CRUD

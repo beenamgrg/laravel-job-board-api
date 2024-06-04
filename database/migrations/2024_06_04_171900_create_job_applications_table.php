@@ -15,7 +15,7 @@ return new class extends Migration
         {
             $table->id();
             $table->string('resume');
-            $table->longText('cv')->nullable();
+            $table->longText('cover_letter')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->unsignedBigInteger('job_id');
@@ -23,6 +23,7 @@ return new class extends Migration
             $table->boolean('is_approved')->default(false);
             $table->boolean('is_rejected')->default(false);
             $table->boolean('status')->default(1);
+            $table->unique(['user_id', 'job_id']);
             $table->timestamps();
         });
     }
