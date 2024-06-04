@@ -69,7 +69,6 @@ class SessionController extends Controller
         {
             if ($request->wantsJson())
             {
-                dd($e);
                 $response = APIHelpers::createAPIResponse(true, 400, $e->getMessage(), null);
                 return response()->json([$response], 400);
             }
