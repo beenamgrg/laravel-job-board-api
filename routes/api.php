@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\UserController;
@@ -22,6 +23,7 @@ Route::middleware('auth:api')->group(function ()
 
     Route::middleware([AdminCheck::class])->group(function ()
     {
-        Route::get('/store', [JobController::class, 'store']);
+        Route::post('/job-store', [JobController::class, 'store']);
+        Route::post('/company-store', [CompanyController::class, 'store']);
     });
 });

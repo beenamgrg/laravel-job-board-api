@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('description');
             $table->string('application_instruction');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
