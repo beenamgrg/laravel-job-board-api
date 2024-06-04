@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\UserController;
@@ -15,13 +16,22 @@ Route::get('/user', function (Request $request)
 Route::get('/home', [UserController::class, 'index']);
 Route::post('/login', [SessionController::class, 'postLogin']);
 Route::post('/sign-up', [SessionController::class, 'store']);
+
+//Job listings serach and get
+Route::get('/search', [JobController::class, 'search']);
+
+
 Route::middleware('auth:api')->group(function ()
 {
     Route::post('/logout', [SessionController::class, 'logout']);
-    Route::get('/jobs', [SessionController::class, 'index']);
-
     Route::middleware([AdminCheck::class])->group(function ()
     {
-        Route::get('/store', [JobController::class, 'store']);
+        //Routes for JOBLISTING CRUD
+        Route::post('/job-store', [JobController::class, 'store']);
+        Route::put('/job-update', [JobController::class, 'update']);
+        Route::delete('/job-delete', [JobController::class, 'delete']);
+
+        //Routes for COMPANY STORE
+        Route::post('/company-store', [CompanyController::class, 'store']);
     });
 });
