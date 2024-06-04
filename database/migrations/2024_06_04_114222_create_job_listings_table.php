@@ -19,6 +19,7 @@ return new class extends Migration
             $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
             $table->string('description');
             $table->string('application_instruction');
+            $table->boolean('status')->default(1);
             $table->timestamps();
             $table->softDeletes();
         });

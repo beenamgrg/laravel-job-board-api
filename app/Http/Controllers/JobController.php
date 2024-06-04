@@ -127,4 +127,39 @@ class JobController extends Controller
             }
         }
     }
+
+    public function search(Request $request)
+    {
+        try
+        {
+            $keyword = $request->keyword;
+            $paginate = intval($request->get("length", env('PAGINATION', 5)));
+            $jobs = JobListing::select('job_listings.title as title', 'companies.name as c_name', 'companies.address as c_addr')
+                ->leftjoin('companies', 'companies.id', '=', 'job_listings.company_id')
+                ->groupBy('job_listings.id', 'companies.id')
+                ->orderBy('job_listings.id', 'DESC')
+                ->where('job_listings.status', 1)
+                ->Where(function ($query) use ($keyword)
+                {
+                    if ($keyword != NULL)
+                    {
+                        $query->where('job_listings.title', 'LIKE', '%' . $keyword . '%');
+                        $query->orWhere('companies.name', 'LIKE', '%' . $keyword . '%');
+                        $query->orwhere('companies.address', 'LIKE', '%' . $keyword . '%');
+                    }
+                })
+                ->paginate($paginate);
+            $response = APIHelpers::createAPIResponse(false, 200, 'Search Results:', $jobs);
+            DB::commit();
+            return response()->json($response, 200);
+        }
+        catch (Exception $e)
+        {
+            if ($request->wantsJson())
+            {
+                $response = APIHelpers::createAPIResponse(true, 400, $e->getMessage(), null);
+                return response()->json([$response], 400);
+            }
+        }
+    }
 }
