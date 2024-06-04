@@ -12,6 +12,7 @@ Route::get('/user', function (Request $request)
 
 Route::get('/home', [UserController::class, 'index']);
 Route::post('/login', [SessionController::class, 'postLogin']);
+Route::post('/sign-up', [SessionController::class, 'store']);
 Route::middleware('auth:api')->group(function ()
 {
     Route::post('/logout', [SessionController::class, 'logout']);

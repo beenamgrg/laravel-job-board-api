@@ -7,9 +7,12 @@ use Illuminate\Support\Facades\Validator;
 use App\Helpers\APIHelpers;
 use Auth;
 use Exception;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class SessionController extends Controller
 {
+    //User Login
     public function postLogin(Request $request)
     {
         try
@@ -53,6 +56,8 @@ class SessionController extends Controller
         }
     }
 
+
+    //user logout
     public function logout(Request $request)
     {
         try
@@ -67,6 +72,54 @@ class SessionController extends Controller
         }
         catch (Exception $e)
         {
+            if ($request->wantsJson())
+            {
+                $response = APIHelpers::createAPIResponse(true, 400, $e->getMessage(), null);
+                return response()->json([$response], 400);
+            }
+        }
+    }
+
+    //user signup
+
+    public function store(Request $request)
+    {
+        DB::beginTransaction();
+        try
+        {
+            $validator = Validator::make($request->all(), [
+                'name' => 'required',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|min:6',
+                'confirm_password' => 'required|min:6|same:password',
+            ]);
+            if ($validator->fails())
+            {
+                return response(['errors' => $validator->errors()->all()], 422);
+            }
+            $user = new User();
+            $user->name = $request->name;
+            $user->email = $request->email;
+            $user->password = $request->password;
+            $user->role = 'seeker';
+            $user->save();
+            $data = array(
+                'name' => $user->name,
+                'email' => $user->email,
+            );
+            if ($request->wantsJson())
+            {
+                auth()->loginUsingId($user->id);
+                $token = Auth::user()->createToken('jobboard')->accessToken;
+                $response = APIHelpers::createAPIResponse(false, 200, 'Welcome to the job-board family', $data);
+                $response['token'] = $token;
+                DB::commit();
+                return response()->json($response, 200);
+            }
+        }
+        catch (Exception $e)
+        {
+            DB::rollBack();
             if ($request->wantsJson())
             {
                 $response = APIHelpers::createAPIResponse(true, 400, $e->getMessage(), null);
