@@ -23,7 +23,12 @@ Route::middleware('auth:api')->group(function ()
 
     Route::middleware([AdminCheck::class])->group(function ()
     {
+        //Routes for JOBLISTING CRUD
         Route::post('/job-store', [JobController::class, 'store']);
+        Route::put('/job-update', [JobController::class, 'update']);
+        Route::delete('/job-delete', [JobController::class, 'delete']);
+
+        //Routes for COMPANY CRUD
         Route::post('/company-store', [CompanyController::class, 'store']);
     });
 });
