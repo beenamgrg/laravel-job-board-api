@@ -48,7 +48,6 @@ class SessionController extends Controller
         }
         catch (Exception $e)
         {
-            dd($e->getmessage());
             if ($request->wantsJson())
             {
                 $response = APIHelpers::createAPIResponse(true, 400, $e->getMessage(), null);
@@ -89,7 +88,8 @@ class SessionController extends Controller
         try
         {
             $validator = Validator::make($request->all(), [
-                'name' => 'required',
+                'first_name' => 'required',
+                'last_name' => 'required',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|min:6',
                 'confirm_password' => 'required|min:6|same:password',
@@ -99,7 +99,7 @@ class SessionController extends Controller
                 return response(['errors' => $validator->errors()->all()], 422);
             }
             $user = new User();
-            $user->name = $request->name;
+            $user->name = $request->first_name . ' ' . $request->last_name;
             $user->email = $request->email;
             $user->password = $request->password;
             $user->role = 'seeker';
