@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Company;
 use App\Models\JobListing;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use App\Helpers\APIHelpers;
 use Illuminate\Support\Facades\Validator;
 
@@ -15,9 +16,28 @@ use Illuminate\Support\Facades\Validator;
 
 class JobController extends Controller
 {
-    public function index()
+    public function getjobs(Request $request)
     {
-        dd('no middleware');
+        try
+        {
+            $paginate = intval($request->get("length", env('PAGINATION', 5)));
+            $jobs = JobListing::select('job_listings.*', 'companies.name as company', 'companies.address as location')
+                ->leftjoin('companies', 'companies.id', 'job_listings.company_id')
+                ->where('job_listings.status', 1)
+                ->groupBy('job_listings.id', 'companies.id')
+                ->orderBy('job_listings.id', 'DESC')
+                ->paginate($paginate);
+            $response = $jobs->count() > 0 ? APIHelpers::createAPIResponse(false, 200, 'List of the active job submissions!!', $jobs) : APIHelpers::createAPIResponse(false, 200, 'No Active Job-Submissions at Moment!', NULL);
+            return response()->json($response, 200);
+        }
+        catch (Exception $e)
+        {
+            if ($request->wantsJson())
+            {
+                $response = APIHelpers::createAPIResponse(true, 400, $e->getMessage(), null);
+                return response()->json([$response], 400);
+            }
+        }
     }
     public function store(Request $request)
     {
@@ -51,6 +71,7 @@ class JobController extends Controller
             $job->description = $request->description;
             $job->application_instruction = $request->application_instruction;
             $job->save();
+            APIHelpers::jobListingLog(Auth::user()->id, $job->id, 'create-job');
             $response = APIHelpers::createAPIResponse(false, 200, 'A job has been successfully created!!', $job->title);
             DB::commit();
             return response()->json($response, 200);

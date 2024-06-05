@@ -2,6 +2,9 @@
 
 namespace App\Helpers;
 
+use App\Models\ListingLog;
+
+
 class APIHelpers
 {
 
@@ -23,5 +26,14 @@ class APIHelpers
         }
 
         return $result;
+    }
+
+    public static function jobListingLog($user_id, $job_id, $action)
+    {
+        $log = new ListingLog();
+        $log->user_id = $user_id;
+        $log->job_id = $job_id;
+        $log->action = $action;
+        $log->save();
     }
 }
