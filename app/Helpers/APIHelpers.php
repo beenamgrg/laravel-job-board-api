@@ -2,6 +2,12 @@
 
 namespace App\Helpers;
 
+use App\Models\ListingLog;
+use App\Models\JobListing;
+use App\Models\Company;
+use Illuminate\Support\Facades\Auth;
+
+
 class APIHelpers
 {
 
@@ -23,5 +29,21 @@ class APIHelpers
         }
 
         return $result;
+    }
+
+    public static function jobListingLog($user_id, $job_id, $action)
+    {
+        $log = new ListingLog();
+        $log->user_id = $user_id;
+        $log->job_id = $job_id;
+        $log->action = $action;
+        $log->save();
+    }
+
+    public static function employerAuthentication($job_id)
+    {
+        $check = JobListing::where('id', $job_id)->where('company_id', Company::where('employer_id', Auth::user()->id)->first()->id)->first() ?? NULL;
+        // dd($check);
+        return $check;
     }
 }

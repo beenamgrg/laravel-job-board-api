@@ -20,7 +20,7 @@ class AdminCheck
     {
         if (Auth::check())
         {
-            if (Auth::user()->role == 'admin')
+            if (Auth::user()->role == 'employer')
             {
                 return $next($request);
             }

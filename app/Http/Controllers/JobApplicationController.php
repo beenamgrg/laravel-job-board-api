@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Helpers\APIHelpers;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NotificationMail;
 use Exception;
 
 
@@ -31,7 +33,7 @@ class JobApplicationController extends Controller
             }
 
             //Check if the job exsists
-            $jobCheck = JobListing::where('id', $request->job_id)->first() ?? NULL;
+            $jobCheck = JobListing::where('id', $request->job_id)->where('status', 1)->get() ?? NULL;
             if ($jobCheck == NULL)
             {
                 $response = APIHelpers::createAPIResponse(true, 400, 'The job doesnot exsist!!', Auth::user()->name);
@@ -64,8 +66,9 @@ class JobApplicationController extends Controller
             $job_application->user_id = Auth::user()->id;
             $job_application->save();
 
-            $response = APIHelpers::createAPIResponse(false, 200, 'Job application Submitted Successfully!!', Auth::user()->name);
+            $response = APIHelpers::createAPIResponse(false, 200, 'Job application Submitted Successfully!!', $job_application);
             DB::commit();
+            Mail::to('beenamgrg089@gmail.com')->send(new NotificationMail($job_application->cover_letter));
             return response()->json($response, 200);
         }
 
@@ -86,16 +89,91 @@ class JobApplicationController extends Controller
         {
             // dd('fg');
             $paginate = intval($request->get("length", env('PAGINATION', 5)));
-            $job_applications = JobApplication::select('job_applications.*', 'job_listings.title as job_title', 'companies.name as company', 'users.name as applicant', 'users.email as applicant_email')
+            $job_applications = JobApplication::select('job_applications.*', 'job_listings.title as job_title', 'companies.name as company', 'companies.email as company_email', 'users.name as applicant', 'users.email as applicant_email')
                 ->leftjoin('job_listings', 'job_listings.id', 'job_applications.job_id')
                 ->leftjoin('users', 'users.id', 'job_applications.user_id')
                 ->leftjoin('companies', 'companies.id', 'job_listings.company_id')
                 ->where('job_applications.status', 1)
+                ->where('companies.employer_id', Auth::user()->id)
                 ->groupBy('job_listings.id', 'companies.id', 'job_applications.id', 'users.id')
                 ->orderBy('job_applications.id', 'DESC')
                 ->paginate($paginate);
 
             $response = $job_applications->count() > 0 ? APIHelpers::createAPIResponse(false, 200, 'List of the active job submissions!!', $job_applications) : APIHelpers::createAPIResponse(false, 200, 'No Active Job-Submissions at Moment!', NULL);
+            return response()->json($response, 200);
+        }
+        catch (Exception $e)
+        {
+            if ($request->wantsJson())
+            {
+                $response = APIHelpers::createAPIResponse(true, 400, $e->getMessage(), null);
+                return response()->json([$response], 400);
+            }
+        }
+    }
+
+    public function approve(Request $request)
+    {
+        DB::beginTransaction();
+        try
+        {
+            $jobApplication = JobApplication::findOrFail($request->jobApplicationId);
+            $check = APIHelpers::employerAuthentication($jobApplication->job_id);
+            if ($check == NULL)
+            {
+                $response = APIHelpers::createAPIResponse(true, 401, 'Unauthorized Access', NULL);
+                return response()->json($response, 402);
+            }
+            $data = JobApplication::select('job_applications.*', 'users.name as applicant_name', 'users.email as applicant_email')
+                ->leftjoin('users', 'users.id', 'job_applications.user_id')
+                ->where('job_applications.id', $request->jobApplicationId)
+                ->first();
+            if ($jobApplication->is_approved == 1)
+            {
+                $response = APIHelpers::createAPIResponse(true, 400, 'Job application has already been approved!!', $data);
+                return response()->json($response, 400);
+            }
+            $jobApplication->is_approved = 1;
+            $jobApplication->save();
+            $response = APIHelpers::createAPIResponse(false, 200, 'Job application approved Successfully!!', $data);
+            DB::commit();
+            return response()->json($response, 200);
+        }
+        catch (Exception $e)
+        {
+            if ($request->wantsJson())
+            {
+                $response = APIHelpers::createAPIResponse(true, 400, $e->getMessage(), null);
+                return response()->json([$response], 400);
+            }
+        }
+    }
+
+    public function reject(Request $request)
+    {
+        DB::beginTransaction();
+        try
+        {
+            $jobApplication = JobApplication::findOrFail($request->jobApplicationId);
+            $check = APIHelpers::employerAuthentication($jobApplication->job_id);
+            if ($check == NULL)
+            {
+                $response = APIHelpers::createAPIResponse(true, 401, 'Unauthorized Access', NULL);
+                return response()->json($response, 402);
+            }
+            $data = JobApplication::select('job_applications.*', 'users.name as applicant_name', 'users.email as applicant_email')
+            ->leftjoin('users', 'users.id', 'job_applications.user_id')
+            ->where('job_applications.id', $request->jobApplicationId)
+                ->first();
+            if ($jobApplication->is_rejected == 1)
+            {
+                $response = APIHelpers::createAPIResponse(true, 400, 'Job application has already been rejected!!', $data);
+                return response()->json($response, 400);
+            }
+            $jobApplication->is_rejected = 1;
+            $jobApplication->save();
+            $response = APIHelpers::createAPIResponse(false, 200, 'Job application rejected successfully!!', $data);
+            DB::commit();
             return response()->json($response, 200);
         }
         catch (Exception $e)

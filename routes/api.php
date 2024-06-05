@@ -20,6 +20,7 @@ Route::post('/sign-up', [SessionController::class, 'store']);
 
 //Job listings serach and get
 Route::get('/search', [JobController::class, 'search']);
+Route::get('/job-listings', [JobController::class, 'getAllJobs']);
 
 
 Route::middleware('auth:api')->group(function ()
@@ -28,7 +29,7 @@ Route::middleware('auth:api')->group(function ()
 
     //Routes for JOB APPLICATION
     Route::post('/submit-job-application', [JobApplicationController::class, 'submitApplication']);
-    Route::middleware([AdminCheck::class])->group(function ()
+    Route::prefix('employer')->middleware([AdminCheck::class])->group(function ()
     {
         //Routes for JOBLISTING CRUD
         Route::post('/job-store', [JobController::class, 'store']);
@@ -40,5 +41,12 @@ Route::middleware('auth:api')->group(function ()
 
         //Route to get the active submissions
         Route::get('/job-applications', [JobApplicationController::class, 'getApplication']);
+
+        //Route to get job listed by employer for its specific company
+        Route::get('/job-listings', [JobController::class, 'getjobs']);
+
+        //Route to approve and reject the job applications
+        Route::post('/job-application-approve', [JobApplicationController::class, 'approve']);
+        Route::post('/job-application-reject', [JobApplicationController::class, 'reject']);
     });
 });
