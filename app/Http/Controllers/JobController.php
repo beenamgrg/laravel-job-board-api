@@ -21,7 +21,7 @@ class JobController extends Controller
         try
         {
             $paginate = intval($request->get("length", env('PAGINATION', 5)));
-            $jobs = JobListing::select('job_listings.*', 'companies.name as company', 'companies.address as location')
+            $jobs = JobListing::select('job_listings.*', 'companies.name as company', 'companies.address as location', 'companies.email as company_email')
                 ->leftjoin('companies', 'companies.id', 'job_listings.company_id')
                 ->where('job_listings.status', 1)
                 ->groupBy('job_listings.id', 'companies.id')

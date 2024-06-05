@@ -86,7 +86,7 @@ class JobApplicationController extends Controller
         {
             // dd('fg');
             $paginate = intval($request->get("length", env('PAGINATION', 5)));
-            $job_applications = JobApplication::select('job_applications.*', 'job_listings.title as job_title', 'companies.name as company', 'users.name as applicant', 'users.email as applicant_email')
+            $job_applications = JobApplication::select('job_applications.*', 'job_listings.title as job_title', 'companies.name as company','companies.email as company_email', 'users.name as applicant', 'users.email as applicant_email')
                 ->leftjoin('job_listings', 'job_listings.id', 'job_applications.job_id')
                 ->leftjoin('users', 'users.id', 'job_applications.user_id')
                 ->leftjoin('companies', 'companies.id', 'job_listings.company_id')

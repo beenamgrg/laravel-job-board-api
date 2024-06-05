@@ -19,6 +19,7 @@ class CompanyController extends Controller
         {
             $validator = Validator::make($request->all(), [
                 'name' => 'required',
+                'email' => 'required|email|unique:companies,email',
                 'address' => 'required',
                 'description' => 'required',
             ]);
@@ -30,6 +31,7 @@ class CompanyController extends Controller
             $company = new Company();
             $company->name = $request->name;
             $company->slug = str_replace(' ', '-', strtolower($request->name));
+            $company->email = $request->email;
             $company->address = $request->address;
             $company->description = $request->description;
             $company->save();

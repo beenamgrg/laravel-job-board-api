@@ -20,6 +20,7 @@ class JobSeeder extends Seeder
                     'id' => 1,
                     'name' => 'Firefly Tech',
                     'slug' => 'firefly-tech',
+                    'email' => 'firefly123@yopmail.com',
                     'address' => 'Pokhara',
                     'description' => 'Firefly tech is an IT office located in Pokhara',
 
@@ -28,6 +29,7 @@ class JobSeeder extends Seeder
                     'id' => 2,
                     'name' => 'Nipuna Prabidhik Sewa',
                     'slug' => 'nipuna-prabhidik-sewa',
+                    'email' => 'nipuna123@yopmail.com',
                     'address' => 'Pokhara',
                     'description' => 'Nipuna Prabidhik Sewa is an IT office located in Pokhara',
 
@@ -36,6 +38,7 @@ class JobSeeder extends Seeder
                     'id' => 3,
                     'name' => 'Janakari Tech',
                     'slug' => 'janakari-tech',
+                    'email' => 'janakari123@yopmail.com',
                     'address' => 'Pokhara',
                     'description' => 'Janakari Tech is an IT office located in Pokhara',
 
