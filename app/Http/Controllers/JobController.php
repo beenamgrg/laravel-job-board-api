@@ -35,12 +35,16 @@ class JobController extends Controller
                 return response(['errors' => $validator->errors()->all()], 422);
             }
             $company_slug = str_replace(' ', '-', strtolower($request->company_name));
+
+            //check if the company exsists or not
             $check = Company::where('slug', $company_slug)->first() ?? NULL;
             if ($check == NULL)
             {
                 $response = APIHelpers::createAPIResponse(false, 402, 'Please register the company first', NULL);
-                return response()->json($response, 200);
+                return response()->json($response, 402);
             }
+
+
             $job = new JobListing();
             $job->title = $request->title;
             $job->company_id = $check->id;
@@ -78,13 +82,18 @@ class JobController extends Controller
             {
                 return response(['errors' => $validator->errors()->all()], 422);
             }
+
             $company_slug = str_replace(' ', '-', strtolower($request->company_name));
+
+            //check if company exsists or not
             $check = Company::where('slug', $company_slug)->first() ?? NULL;
             if ($check == NULL)
             {
-                $response = APIHelpers::createAPIResponse(false, 402, 'Please register the company first', NULL);
-                return response()->json($response, 200);
+                $response = APIHelpers::createAPIResponse(true, 402, 'Please register the company first', NULL);
+                return response()->json($response, 402);
             }
+
+
             $job = JobListing::where('id', $request->id)->firstOrFail();
             $job->title = $request->title;
             $job->company_id = $check->id;
@@ -149,7 +158,7 @@ class JobController extends Controller
                     }
                 })
                 ->paginate($paginate);
-            $response = APIHelpers::createAPIResponse(false, 200, 'Search Results:', $jobs);
+            $response = $jobs->count() > 0 ? APIHelpers::createAPIResponse(false, 200, 'Search Results:', $jobs) : APIHelpers::createAPIResponse(false, 200, 'No results found!', NULL);
             DB::commit();
             return response()->json($response, 200);
         }

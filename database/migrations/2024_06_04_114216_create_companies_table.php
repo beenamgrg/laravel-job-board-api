@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('address');
-            $table->string('description');
+            $table->longText('description');
             $table->boolean('status')->default(1);
             $table->timestamps();
             $table->softDeletes();
