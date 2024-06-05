@@ -3,6 +3,8 @@
 namespace App\Helpers;
 
 use App\Models\ListingLog;
+use App\Models\JobListing;
+use Illuminate\Support\Facades\Auth;
 
 
 class APIHelpers
@@ -35,5 +37,11 @@ class APIHelpers
         $log->job_id = $job_id;
         $log->action = $action;
         $log->save();
+    }
+
+    public static function employerAuthentication($job_id)
+    {
+        $check = JobListing::where('id', $job_id)->where('employer_id', Auth::user()->id)->first() ?? NULL;
+        return $check;
     }
 }

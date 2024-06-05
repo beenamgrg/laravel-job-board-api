@@ -15,8 +15,8 @@ return new class extends Migration
         {
             $table->id();
             $table->string('title');
-            $table->unsignedBigInteger('company_id');
-            $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
+            $table->unsignedBigInteger('employer_id');
+            $table->foreign('employer_id')->references('id')->on('users')->onDelete('cascade');
             $table->longText('description');
             $table->string('application_instruction');
             $table->boolean('status')->default(1);

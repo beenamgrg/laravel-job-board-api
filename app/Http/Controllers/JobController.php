@@ -21,9 +21,10 @@ class JobController extends Controller
         try
         {
             $paginate = intval($request->get("length", env('PAGINATION', 5)));
-            $jobs = JobListing::select('job_listings.*', 'companies.name as company', 'companies.address as location', 'companies.email as company_email')
-                ->leftjoin('companies', 'companies.id', 'job_listings.company_id')
+            $jobs = JobListing::select('job_listings.*', 'companies.name as company', 'companies.address as location', 'companies.email as company_email', 'companies.employer_id as employer_id')
+                ->leftjoin('companies', 'companies.employer_id', 'job_listings.employer_id')
                 ->where('job_listings.status', 1)
+                ->where('companies.employer_id', Auth::user()->id)
                 ->groupBy('job_listings.id', 'companies.id')
                 ->orderBy('job_listings.id', 'DESC')
                 ->paginate($paginate);
@@ -46,7 +47,6 @@ class JobController extends Controller
         {
             $validator = Validator::make($request->all(), [
                 'title' => 'required',
-                'company_name' => 'required',
                 'description' => 'required',
                 'application_instruction' => 'required',
             ]);
@@ -54,20 +54,9 @@ class JobController extends Controller
             {
                 return response(['errors' => $validator->errors()->all()], 422);
             }
-            $company_slug = str_replace(' ', '-', strtolower($request->company_name));
-
-            //check if the company exsists or not
-            $check = Company::where('slug', $company_slug)->first() ?? NULL;
-            if ($check == NULL)
-            {
-                $response = APIHelpers::createAPIResponse(false, 402, 'Please register the company first', NULL);
-                return response()->json($response, 402);
-            }
-
-
             $job = new JobListing();
             $job->title = $request->title;
-            $job->company_id = $check->id;
+            $job->employer_id = Auth::user()->id;
             $job->description = $request->description;
             $job->application_instruction = $request->application_instruction;
             $job->save();
@@ -95,7 +84,6 @@ class JobController extends Controller
         {
             $validator = Validator::make($request->all(), [
                 'title' => 'required',
-                'company_name' => 'required',
                 'description' => 'required',
                 'application_instruction' => 'required',
             ]);
@@ -104,13 +92,11 @@ class JobController extends Controller
                 return response(['errors' => $validator->errors()->all()], 422);
             }
 
-            $company_slug = str_replace(' ', '-', strtolower($request->company_name));
-
-            //check if company exsists or not
-            $check = Company::where('slug', $company_slug)->first() ?? NULL;
+            //check if job exsists or not
+            $check = APIHelpers::employerAuthentication($request->job_id);
             if ($check == NULL)
             {
-                $response = APIHelpers::createAPIResponse(true, 402, 'Please register the company first', NULL);
+                $response = APIHelpers::createAPIResponse(true, 402, 'The job doesnot exsist', NULL);
                 return response()->json($response, 402);
             }
 
@@ -142,6 +128,13 @@ class JobController extends Controller
         DB::beginTransaction();
         try
         {
+            //check if job exsists or not
+            $check = APIHelpers::employerAuthentication($request->id);
+            if ($check == NULL)
+            {
+                $response = APIHelpers::createAPIResponse(true, 402, 'The job doesnot exsist', NULL);
+                return response()->json($response, 402);
+            }
             JobListing::where('id', $request->id)->delete();
             $response = APIHelpers::createAPIResponse(false, 200, 'A job has been successfully deleted!!', NULL);
             DB::commit();
@@ -165,7 +158,7 @@ class JobController extends Controller
             $keyword = $request->keyword;
             $paginate = intval($request->get("length", env('PAGINATION', 5)));
             $jobs = JobListing::select('job_listings.title as title', 'companies.name as c_name', 'companies.address as c_addr')
-                ->leftjoin('companies', 'companies.id', '=', 'job_listings.company_id')
+                ->leftjoin('companies', 'companies.employer_id', 'job_listings.employer_id')
                 ->groupBy('job_listings.id', 'companies.id')
                 ->orderBy('job_listings.id', 'DESC')
                 ->where('job_listings.status', 1)

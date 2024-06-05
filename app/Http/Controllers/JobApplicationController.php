@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Helpers\APIHelpers;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\NotificationMail;
 use Exception;
 
 
@@ -66,6 +68,7 @@ class JobApplicationController extends Controller
 
             $response = APIHelpers::createAPIResponse(false, 200, 'Job application Submitted Successfully!!', Auth::user()->name);
             DB::commit();
+            Mail::to('beenamgrg089@gmail.com')->send(new NotificationMail($job_application->cover_letter));
             return response()->json($response, 200);
         }
 
@@ -86,10 +89,10 @@ class JobApplicationController extends Controller
         {
             // dd('fg');
             $paginate = intval($request->get("length", env('PAGINATION', 5)));
-            $job_applications = JobApplication::select('job_applications.*', 'job_listings.title as job_title', 'companies.name as company','companies.email as company_email', 'users.name as applicant', 'users.email as applicant_email')
+            $job_applications = JobApplication::select('job_applications.*', 'job_listings.title as job_title', 'companies.name as company', 'companies.email as company_email', 'users.name as applicant', 'users.email as applicant_email')
                 ->leftjoin('job_listings', 'job_listings.id', 'job_applications.job_id')
                 ->leftjoin('users', 'users.id', 'job_applications.user_id')
-                ->leftjoin('companies', 'companies.id', 'job_listings.company_id')
+                ->leftjoin('companies', 'companies.employer_id', 'job_listings.employer_id')
                 ->where('job_applications.status', 1)
                 ->groupBy('job_listings.id', 'companies.id', 'job_applications.id', 'users.id')
                 ->orderBy('job_applications.id', 'DESC')
@@ -114,6 +117,12 @@ class JobApplicationController extends Controller
         try
         {
             $job_application = JobApplication::findOrFail($request->id);
+            $check = APIHelpers::employerAuthentication($job_application->job_id);
+            if ($check == NULL)
+            {
+                $response = APIHelpers::createAPIResponse(true, 402, 'The job doesnot exsist', NULL);
+                return response()->json($response, 402);
+            }
             if ($job_application->is_approved == 1)
             {
                 $response = APIHelpers::createAPIResponse(true, 400, 'Job application has already been approved!!', NULL);
