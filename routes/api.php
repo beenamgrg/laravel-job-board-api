@@ -40,5 +40,9 @@ Route::middleware('auth:api')->group(function ()
 
         //Route to get the active submissions
         Route::get('/job-applications', [JobApplicationController::class, 'getApplication']);
+
+        //Route to approve and reject the job applications
+        Route::post('/job-application-approve', [JobApplicationController::class, 'approve']);
+        Route::post('/job-application-reject', [JobApplicationController::class, 'reject']);
     });
 });

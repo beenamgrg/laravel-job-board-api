@@ -107,4 +107,59 @@ class JobApplicationController extends Controller
             }
         }
     }
+
+    public function approve(Request $request)
+    {
+        DB::beginTransaction();
+        try
+        {
+            $job_application = JobApplication::findOrFail($request->id);
+            if ($job_application->is_approved == 1)
+            {
+                $response = APIHelpers::createAPIResponse(true, 400, 'Job application has already been approved!!', NULL);
+                return response()->json($response, 400);
+            }
+            $job_application->is_approved = 1;
+            $job_application->save();
+            $response = APIHelpers::createAPIResponse(false, 200, 'Job application approved Successfully!!', NULL);
+            DB::commit();
+            return response()->json($response, 200);
+        }
+        catch (Exception $e)
+        {
+            if ($request->wantsJson())
+            {
+                $response = APIHelpers::createAPIResponse(true, 400, $e->getMessage(), null);
+                return response()->json([$response], 400);
+            }
+        }
+    }
+
+    public function reject(Request $request)
+    {
+        DB::beginTransaction();
+        try
+        {
+            $job_application = JobApplication::findOrFail($request->id);
+            // dd($job_application);
+            if ($job_application->is_rejected == 1)
+            {
+                $response = APIHelpers::createAPIResponse(true, 400, 'Job application has already been rejected!!', NULL);
+                return response()->json($response, 400);
+            }
+            $job_application->is_rejected = 1;
+            $job_application->save();
+            $response = APIHelpers::createAPIResponse(false, 200, 'Job application rejected successfully!!', NULL);
+            DB::commit();
+            return response()->json($response, 200);
+        }
+        catch (Exception $e)
+        {
+            if ($request->wantsJson())
+            {
+                $response = APIHelpers::createAPIResponse(true, 400, $e->getMessage(), null);
+                return response()->json([$response], 400);
+            }
+        }
+    }
 }
