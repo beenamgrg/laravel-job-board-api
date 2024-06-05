@@ -37,5 +37,8 @@ Route::middleware('auth:api')->group(function ()
 
         //Routes for COMPANY STORE
         Route::post('/company-store', [CompanyController::class, 'store']);
+
+        //Route to get the active submissions
+        Route::get('/job-applications', [JobApplicationController::class, 'getApplication']);
     });
 });

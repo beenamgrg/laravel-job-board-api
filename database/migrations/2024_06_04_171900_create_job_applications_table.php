@@ -25,6 +25,7 @@ return new class extends Migration
             $table->boolean('status')->default(1);
             $table->unique(['user_id', 'job_id']);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

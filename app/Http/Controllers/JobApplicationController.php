@@ -79,4 +79,32 @@ class JobApplicationController extends Controller
             }
         }
     }
+
+    public function getApplication(Request $request)
+    {
+        try
+        {
+            // dd('fg');
+            $paginate = intval($request->get("length", env('PAGINATION', 5)));
+            $job_applications = JobApplication::select('job_applications.*', 'job_listings.title as job_title', 'companies.name as company', 'users.name as applicant', 'users.email as applicant_email')
+                ->leftjoin('job_listings', 'job_listings.id', 'job_applications.job_id')
+                ->leftjoin('users', 'users.id', 'job_applications.user_id')
+                ->leftjoin('companies', 'companies.id', 'job_listings.company_id')
+                ->where('job_applications.status', 1)
+                ->groupBy('job_listings.id', 'companies.id', 'job_applications.id', 'users.id')
+                ->orderBy('job_applications.id', 'DESC')
+                ->paginate($paginate);
+
+            $response = $job_applications->count() > 0 ? APIHelpers::createAPIResponse(false, 200, 'List of the active job submissions!!', $job_applications) : APIHelpers::createAPIResponse(false, 200, 'No Active Job-Submissions at Moment!', NULL);
+            return response()->json($response, 200);
+        }
+        catch (Exception $e)
+        {
+            if ($request->wantsJson())
+            {
+                $response = APIHelpers::createAPIResponse(true, 400, $e->getMessage(), null);
+                return response()->json([$response], 400);
+            }
+        }
+    }
 }
