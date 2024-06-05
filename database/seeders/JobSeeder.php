@@ -54,7 +54,7 @@ class JobSeeder extends Seeder
                 [
                     'id' => 1,
                     'title' => 'Laravel Developr',
-                    'employer_id' => 1,
+                    'company_id' => 1,
                     'description' => 'Vacancy for a laravel developer',
                     'application_instruction' => 'Call us at 9800000001',
 
@@ -62,21 +62,21 @@ class JobSeeder extends Seeder
                 [
                     'id' => 2,
                     'title' => 'React Developer',
-                    'employer_id' => 2,
+                    'company_id' => 2,
                     'description' => 'Vacancy for a react developer',
                     'application_instruction' => 'Call us at 9800000002',
                 ],
                 [
                     'id' => 3,
                     'title' => 'UI-UX designer',
-                    'employer_id' => 3,
+                    'company_id' => 3,
                     'description' => 'Vacancy for a graphic designer',
                     'application_instruction' => 'Call us at 9800000003',
                 ],
                 [
                     'id' => 4,
                     'title' => 'UI-UX designer',
-                    'employer_id' => 1,
+                    'company_id' => 1,
                     'description' => 'Vacancy for a graphic designer',
                     'application_instruction' => 'Call us at 9800000003',
                 ],

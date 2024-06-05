@@ -35,7 +35,7 @@ class SessionController extends Controller
                 {
                     Auth::user()->tokens()->delete();
                     $token = Auth::user()->createToken('jobBoard')->accessToken;
-                    $response = APIHelpers::createAPIResponse(false, 200, 'Successfully logged in', $data['email']);
+                    $response = APIHelpers::createAPIResponse(false, 200, 'Successfully logged in', Auth::user());
                     $response['token'] = $token;
                     return response()->json($response, 200);
                 }

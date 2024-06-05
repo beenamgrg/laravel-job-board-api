@@ -20,6 +20,7 @@ Route::post('/sign-up', [SessionController::class, 'store']);
 
 //Job listings serach and get
 Route::get('/search', [JobController::class, 'search']);
+Route::get('/job-listings', [JobController::class, 'getAllJobs']);
 
 
 Route::middleware('auth:api')->group(function ()
@@ -28,7 +29,7 @@ Route::middleware('auth:api')->group(function ()
 
     //Routes for JOB APPLICATION
     Route::post('/submit-job-application', [JobApplicationController::class, 'submitApplication']);
-    Route::middleware([AdminCheck::class])->group(function ()
+    Route::prefix('employer')->middleware([AdminCheck::class])->group(function ()
     {
         //Routes for JOBLISTING CRUD
         Route::post('/job-store', [JobController::class, 'store']);

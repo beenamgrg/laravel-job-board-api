@@ -8,6 +8,8 @@ use App\Models\Company;
 use Illuminate\Support\Facades\DB;
 use App\Helpers\APIHelpers;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+
 
 
 class CompanyController extends Controller
@@ -26,6 +28,12 @@ class CompanyController extends Controller
             if ($validator->fails())
             {
                 return response(['errors' => $validator->errors()->all()], 422);
+            }
+            $check = Company::where('employer_id', Auth::user()->id)->first() ?? NULL;
+            if ($check != NULL)
+            {
+                $response = APIHelpers::createAPIResponse(true, 402, 'One employer can have only one company!!', NULL);
+                return response()->json($response, 402);
             }
 
             $company = new Company();
