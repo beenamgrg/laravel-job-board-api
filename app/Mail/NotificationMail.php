@@ -9,39 +9,33 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class NotificationMail extends Mailable
+class NotificationMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
+
+    protected $data;
+    protected $user;
+
+
 
     /**
      * Create a new message instance.
      */
-    public function __construct($data)
+    public function __construct()
     {
-        $this->data = $data;
     }
 
-    /**
-     * Get the message envelope.
-     */
-    public function envelope(): Envelope
-    {
-        return new Envelope(
-            subject: 'Notification Mail',
-        );
-    }
 
     /**
      * Get the message content definition.
      */
-    public function content(): Content
+    public function build()
     {
-        return new Content(
-            markdown: 'emails.notification',
-            with: [
-                'data' => $this->data,
-            ]
-        );
+        // dd($this->user);
+        return $this->to($this->user)
+            ->subject('test')
+            ->markdown('emails.notification')
+            ->with(['data' => 'test']);
     }
 
     /**

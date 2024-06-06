@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\JobApplication;
+use App\Jobs\SendReviewEmail;
 use App\Models\JobListing;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -12,8 +13,11 @@ use App\Helpers\APIHelpers;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\NotificationMail;
+use App\Mail\ReviewMail;
 use Exception;
 
+use Illuminate\Bus\Batch;
+use Illuminate\Support\Facades\Bus;
 
 class JobApplicationController extends Controller
 {
@@ -124,10 +128,13 @@ class JobApplicationController extends Controller
                 $response = APIHelpers::createAPIResponse(true, 401, 'Unauthorized Access', NULL);
                 return response()->json($response, 402);
             }
-            $data = JobApplication::select('job_applications.*', 'users.name as applicant_name', 'users.email as applicant_email')
+            $data = JobApplication::select('job_applications.*', 'users.name as applicant_name', 'users.email as applicant_email', 'companies.name as company_name', 'companies.email as company_email', 'job_listings.title as job_title')
+                ->leftjoin('job_listings', 'job_listings.id', 'job_applications.job_id')
                 ->leftjoin('users', 'users.id', 'job_applications.user_id')
+                ->leftjoin('companies', 'companies.employer_id', 'users.id')
                 ->where('job_applications.id', $request->jobApplicationId)
                 ->first();
+            // dd($data);
             if ($jobApplication->is_approved == 1)
             {
                 $response = APIHelpers::createAPIResponse(true, 400, 'Job application has already been approved!!', $data);
@@ -136,7 +143,17 @@ class JobApplicationController extends Controller
             $jobApplication->is_approved = 1;
             $jobApplication->save();
             $response = APIHelpers::createAPIResponse(false, 200, 'Job application approved Successfully!!', $data);
-            DB::commit();
+            // DB::commit();
+            $mailData = ['user' => $data->applicant_name, 'user_email' => $data->applicant_email, 'company' => $data->company_name, 'company_email' => $data->company_email, 'position' => $data->job_title];
+            // dd($data);
+            $subjectLine = 'Job Application Review';
+            $viewName = 'emails.approval';
+            // SendReviewEmail::dispatch($mailData, $subjectLine, $viewName)->delay(now()->addMinutes(1));
+            // dd($data);
+            SendReviewEmail::dispatch('beenamgrg089@gmail.com')->onConnection('database');
+            // $batch = Bus::batch([
+            //     new SendReviewEmail($data, $data->applicant_email),
+            // ]);
             return response()->json($response, 200);
         }
         catch (Exception $e)
@@ -161,10 +178,13 @@ class JobApplicationController extends Controller
                 $response = APIHelpers::createAPIResponse(true, 401, 'Unauthorized Access', NULL);
                 return response()->json($response, 402);
             }
-            $data = JobApplication::select('job_applications.*', 'users.name as applicant_name', 'users.email as applicant_email')
-            ->leftjoin('users', 'users.id', 'job_applications.user_id')
-            ->where('job_applications.id', $request->jobApplicationId)
+            $data = JobApplication::select('job_applications.*', 'users.name as applicant_name', 'users.email as applicant_email', 'companies.name as company_name', 'companies.email as company_email', 'job_listings.title as job_title')
+                ->leftjoin('job_listings', 'job_listings.id', 'job_applications.job_id')
+                ->leftjoin('users', 'users.id', 'job_applications.user_id')
+                ->leftjoin('companies', 'companies.employer_id', 'users.id')
+                ->where('job_applications.id', $request->jobApplicationId)
                 ->first();
+            // dd($data);
             if ($jobApplication->is_rejected == 1)
             {
                 $response = APIHelpers::createAPIResponse(true, 400, 'Job application has already been rejected!!', $data);
@@ -172,8 +192,12 @@ class JobApplicationController extends Controller
             }
             $jobApplication->is_rejected = 1;
             $jobApplication->save();
-            $response = APIHelpers::createAPIResponse(false, 200, 'Job application rejected successfully!!', $data);
-            DB::commit();
+            $response = APIHelpers::createAPIResponse(false, 200, 'Job application rejected Successfully!!', $data);
+            // DB::commit();
+            $mailData = ['user' => $data->applicant_name, 'company' => $data->company_name, 'company_email' => $data->company_email, 'position' => $data->job_title];
+            $subjectLine = 'Job Application Review';
+            $viewName = 'emails.rejection';
+            Mail::to($data->applicant_email)->later(now()->addMinutes(1), new ReviewMail($subjectLine, $viewName, $mailData));
             return response()->json($response, 200);
         }
         catch (Exception $e)
