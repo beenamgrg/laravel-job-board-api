@@ -1,5 +1,5 @@
 <x-mail::message>
-Hello {{$data}},
+Hello ,
 
 Your Order No has been placed successfully and is now being processed
 

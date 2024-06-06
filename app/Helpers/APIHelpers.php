@@ -43,7 +43,6 @@ class APIHelpers
     public static function employerAuthentication($job_id)
     {
         $check = JobListing::where('id', $job_id)->where('company_id', Company::where('employer_id', Auth::user()->id)->first()->id)->first() ?? NULL;
-        // dd($check);
         return $check;
     }
 }
