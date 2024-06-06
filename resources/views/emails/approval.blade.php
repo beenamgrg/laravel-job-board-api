@@ -1,12 +1,12 @@
 <x-mail::message>
-Greetings {{$data['user']}},
+Greetings {{$data['applicant_name']}},
 
-We have reviewed your job application for the position ,{{$data['position']}} here at {{$data['company']}}. We are very happy to inform you that your application has been approved. Please visit the office for the further interview tomorrow at 1 p.m.
 
-Feel free to contact us  {{$data['company_email']}} if you have any queries.
+We have reviewed your job application for the position, {{$data['job_title']}} here at, {{$data['company_name']}}. We are very happy to inform you that your application has been approved. Please visit the office for the further interview tomorrow at 1 p.m.
+
+Feel free to contact us at {{$data['company_email']}} if you have any queries.
 
 
 Thanks,<br>
-{{ Auth::user()->name }} 
-{{$data['company']}}
+{{$data['company_name']}}
 </x-mail::message>

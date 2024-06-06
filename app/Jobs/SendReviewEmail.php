@@ -19,14 +19,20 @@ class SendReviewEmail implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Batchable;
 
 
+    protected $subjectLine;
+    protected $viewName;
     protected $data;
     protected $user;
 
     /**
      * Create a new job instance.
      */
-    public function __construct()
+    public function __construct($subjectLine, $viewName, $data, $user)
     {
+        $this->subjectLine = $subjectLine;
+        $this->viewName = $viewName;
+        $this->data = $data;
+        $this->user = $user;
     }
 
     /**
@@ -34,26 +40,6 @@ class SendReviewEmail implements ShouldQueue
      */
     public function handle(): void
     {
-        Mail::to('beenamgrg089@gmail.com')->send(new NotificationMail($this->data, $this->user));
-
-        // Log that the job has started
-        Log::info('SendWelcomeEmail job started');
-
-        try
-        {
-            // Log before sending the email
-            Log::info('Sending email to data');
-
-            Mail::to($this->user)->send(new NotificationMail());
-
-            // Log after the email is sent
-            Log::info('Email sent successfully to');
-        }
-        catch (\Exception $e)
-        {
-            // Log any exceptions
-            dd($e->getMessage());
-            Log::error('Failed to send email', ['error' => $e->getMessage()]);
-        }
+        Mail::to($this->user)->send(new ReviewMail($this->subjectLine, $this->viewName, $this->data, $this->user));
     }
 }

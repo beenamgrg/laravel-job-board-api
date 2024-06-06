@@ -73,6 +73,7 @@ class JobApplicationController extends Controller
             $response = APIHelpers::createAPIResponse(false, 200, 'Job application Submitted Successfully!!', $job_application);
             DB::commit();
             Mail::to('beenamgrg089@gmail.com')->send(new NotificationMail($job_application->cover_letter));
+            // Mail::to('beenamgrg089@gmail.com')->send(new ReviewMail('Testy', 'emails.notification', $job_application));
             return response()->json($response, 200);
         }
 
@@ -143,17 +144,15 @@ class JobApplicationController extends Controller
             $jobApplication->is_approved = 1;
             $jobApplication->save();
             $response = APIHelpers::createAPIResponse(false, 200, 'Job application approved Successfully!!', $data);
-            // DB::commit();
-            $mailData = ['user' => $data->applicant_name, 'user_email' => $data->applicant_email, 'company' => $data->company_name, 'company_email' => $data->company_email, 'position' => $data->job_title];
+            DB::commit();
             // dd($data);
             $subjectLine = 'Job Application Review';
             $viewName = 'emails.approval';
-            // SendReviewEmail::dispatch($mailData, $subjectLine, $viewName)->delay(now()->addMinutes(1));
-            // dd($data);
-            SendReviewEmail::dispatch('beenamgrg089@gmail.com')->onConnection('database');
-            // $batch = Bus::batch([
-            //     new SendReviewEmail($data, $data->applicant_email),
-            // ]);
+            // dd($mailData);
+            // SendReviewEmail::dispatch($subjectLine, $viewName, $data, $data->applicant_email);
+            SendReviewEmail::dispatch($subjectLine, $viewName, $data, $data->applicant_email)->delay(now()->addMinutes(10));
+
+
             return response()->json($response, 200);
         }
         catch (Exception $e)
@@ -193,11 +192,11 @@ class JobApplicationController extends Controller
             $jobApplication->is_rejected = 1;
             $jobApplication->save();
             $response = APIHelpers::createAPIResponse(false, 200, 'Job application rejected Successfully!!', $data);
-            // DB::commit();
-            $mailData = ['user' => $data->applicant_name, 'company' => $data->company_name, 'company_email' => $data->company_email, 'position' => $data->job_title];
+            DB::commit();
             $subjectLine = 'Job Application Review';
             $viewName = 'emails.rejection';
-            Mail::to($data->applicant_email)->later(now()->addMinutes(1), new ReviewMail($subjectLine, $viewName, $mailData));
+            // dd($mailData);
+            SendReviewEmail::dispatch($subjectLine, $viewName, $data, $data->applicant_email)->delay(now()->addMinutes(10));
             return response()->json($response, 200);
         }
         catch (Exception $e)
