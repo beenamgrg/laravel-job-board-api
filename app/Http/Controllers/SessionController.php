@@ -23,6 +23,12 @@ use Illuminate\Support\Facades\Auth;
  *          url="http://www.apache.org/licenses/LICENSE-2.0.html"
  *      )
  * )
+ *  * @OA\SecurityScheme(
+ *     securityScheme="BearerAuth",
+ *     type="http",
+ *     scheme="bearer",
+ *     bearerFormat="JWT"
+ * )
  */
 class SessionController extends Controller
 {
@@ -36,10 +42,28 @@ class SessionController extends Controller
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/User")
      *     ),
+     *     @OA\Parameter(
+     *         name="email",
+     *         in="path",
+     *         description="User's Email",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="password",
+     *         in="path",
+     *         description="User's password",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Login Successful",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/User"))
+     *         description="Successful operation",
+     *         @OA\JsonContent(type="object", @OA\Items(ref="#/components/schemas/User"))
      *     ),
      *     @OA\Response(
      *         response=422,
@@ -111,10 +135,11 @@ class SessionController extends Controller
      *     path="/api/logout",
      *     summary="User Logout",
      *     tags={"Users"},
+     *      security={{"bearer_token":{}}},
      *     @OA\Response(
      *         response=200,
-     *         description="Logout Successful",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/User"))
+     *         description="Successful operation",
+     *         @OA\JsonContent(type="object", @OA\Items(ref="#/components/schemas/User"))
      *     ),
      *     @OA\Response(
      *         response=500,
@@ -154,10 +179,55 @@ class SessionController extends Controller
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/User")
      *     ),
+     *     @OA\Parameter(
+     *         name="firstName",
+     *         in="path",
+     *         description="User's Firstname",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="lastName",
+     *         in="path",
+     *         description="User's lastName",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="email",
+     *         in="path",
+     *         description="User's Email",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="password",
+     *         in="path",
+     *         description="User's password",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="confirmPassword",
+     *         in="path",
+     *         description="User's confirmPassword",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Sign-up Successful",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/User"))
+     *         description="Successful operation",
+     *         @OA\JsonContent(type="object", @OA\Items(ref="#/components/schemas/User"))
      *     ),
      *     @OA\Response(
      *         response=422,
@@ -176,11 +246,11 @@ class SessionController extends Controller
         try
         {
             $validator = Validator::make($request->all(), [
-                'first_name' => 'required',
-                'last_name' => 'required',
+                'firstName' => 'required',
+                'lastName' => 'required',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|min:6',
-                'confirm_password' => 'required|min:6|same:password',
+                'confirmPassword' => 'required|min:6|same:password',
             ]);
             if ($validator->fails())
             {
@@ -188,7 +258,7 @@ class SessionController extends Controller
                 return response()->json([$response], 422);
             }
             $user = new User();
-            $user->name = $request->first_name . ' ' . $request->last_name;
+            $user->name = $request->firstName . ' ' . $request->lastName;
             $user->email = $request->email;
             $user->password = $request->password;
             $user->role = 'seeker';

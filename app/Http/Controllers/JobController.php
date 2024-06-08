@@ -15,19 +15,22 @@ use OpenApi\Annotations as OA;
 class JobController extends Controller
 {
     //Functions accessed job-employers only
+
+    //Get Job
     /**
      * @OA\Get(
      *     path="/api/employer/job-listings",
      *     summary="Get list of jobs listed by employer",
      *     tags={"JobListings"},
+     *      security={{"bearer_token":{}}},
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/JobListing"))
+     *         @OA\JsonContent(type="object", @OA\Items(ref="#/components/schemas/JobListing"))
      *     ),
      *     @OA\Response(
-     *         response=404,
-     *         description="Not Found"
+     *         response=500,
+     *         description="Internal Server Error"
      *     )
      * )
      */
@@ -55,11 +58,17 @@ class JobController extends Controller
         }
     }
 
+    //Store Job
     /**
      * @OA\Post(
-     *     path="/api/job-store",
+     *     path="/api/employer/job-store",
      *     summary="Store job",
      *     tags={"Job Listings"},
+     *      security={{"bearer_token":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/JobListing")
+     *     ),
      *     @OA\Parameter(
      *         name="title",
      *         in="path",
@@ -87,14 +96,10 @@ class JobController extends Controller
      *             type="string"
      *         )
      *     ),
-     *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/JobListing")
-     *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Sign-up Successful",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/JobListing"))
+     *         description="Successful operation",
+     *         @OA\JsonContent(type="object", @OA\Items(ref="#/components/schemas/JobListing"))
      *     ),
      *     @OA\Response(
      *         response=422,
@@ -130,7 +135,7 @@ class JobController extends Controller
             $job->save();
 
             APIHelpers::jobListingLog(Auth::user()->id, $job->id, 'create-job');
-            $response = APIHelpers::createAPIResponse(false, 200, 'A job has been successfully created!!', $job);
+            $response = APIHelpers::createAPIResponse(false, 200, 'The job has been successfully created!!', $job);
             DB::commit();
             return response()->json($response, 200);
         }
@@ -146,23 +151,65 @@ class JobController extends Controller
         }
     }
 
+    //Update Job
     /**
-     * @OA\Post(
-     *     path="/api/job-update",
+     * @OA\Put(
+     *     path="/api/employer/job-update",
      *     summary="Update job",
      *     tags={"Job Listings"},
+     *      security={{"bearer_token":{}}},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(ref="#/components/schemas/JobListing")
      *     ),
+     *     @OA\Parameter(
+     *         name="jobId",
+     *         in="path",
+     *         description="Id of the job",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="title",
+     *         in="path",
+     *         description="Title of the job",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="description",
+     *         in="path",
+     *         description="Description of the job",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="applicationInstruction",
+     *         in="path",
+     *         description="Application Instruction for the job",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Sign-up Successful",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/JobListing"))
+     *         description="Successful operation",
+     *         @OA\JsonContent(type="object", @OA\Items(ref="#/components/schemas/JobListing"))
      *     ),
      *     @OA\Response(
      *         response=422,
      *         description="Validation Unsucessful"
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden Access"
      *     ),
      *     @OA\Response(
      *         response=500,
@@ -177,29 +224,31 @@ class JobController extends Controller
         try
         {
             $validator = Validator::make($request->all(), [
+                'jobId' => 'required',
                 'title' => 'required',
                 'description' => 'required',
-                'application_instruction' => 'required',
+                'applicationInstruction' => 'required',
             ]);
             if ($validator->fails())
             {
-                return response(['errors' => $validator->errors()->all()], 422);
+                $response = APIHelpers::createAPIResponse(true, 422, $validator->errors()->all(), null);
+                return response()->json([$response], 422);
             }
 
             //check if job exsists or not
-            $check = APIHelpers::employerAuthentication($request->job_id);
+            $check = APIHelpers::employerAuthentication($request->jobId);
             if ($check == NULL)
             {
-                $response = APIHelpers::createAPIResponse(true, 401, 'Unauthorized Access', NULL);
-                return response()->json($response, 401);
+                $response = APIHelpers::createAPIResponse(true, 403, 'Forbidden Access', NULL);
+                return response()->json($response, 403);
             }
-            $job = JobListing::where('id', $request->job_id)->firstOrFail();
+            $job = JobListing::where('id', $request->jobId)->firstOrFail();
             $job->title = $request->title;
             $job->company_id = $check->id;
             $job->description = $request->description;
-            $job->application_instruction = $request->application_instruction;
+            $job->application_instruction = $request->applicationInstruction;
             $job->save();
-            $response = APIHelpers::createAPIResponse(false, 200, 'A job has been successfully updated!!', $job);
+            $response = APIHelpers::createAPIResponse(false, 200, 'The job has been successfully updated!!', $job);
             DB::commit();
             return response()->json($response, 200);
         }
@@ -209,26 +258,74 @@ class JobController extends Controller
             DB::rollBack();
             if ($request->wantsJson())
             {
-                $response = APIHelpers::createAPIResponse(true, 400, $e->getMessage(), null);
-                return response()->json([$response], 400);
+                $response = APIHelpers::createAPIResponse(true, 500, $e->getMessage(), null);
+                return response()->json([$response], 500);
             }
         }
     }
+
+    //Delete Job
+    /**
+     * @OA\Delete(
+     *     path="/api/employer/job-delete",
+     *     summary="Delete job",
+     *     tags={"Job Listings"},
+     *      security={{"bearer_token":{}}},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(ref="#/components/schemas/JobListing")
+     *     ),
+     *     @OA\Parameter(
+     *         name="jobId",
+     *         in="path",
+     *         description="Id of the job",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/JobListing"))
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Validation Unsucessful"
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden Access"
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal Server Error"
+     *     )
+     * )
+     */
 
     public function delete(Request $request)
     {
         DB::beginTransaction();
         try
         {
+            $validator = Validator::make($request->all(), [
+                'jobId' => 'required',
+            ]);
+            if ($validator->fails())
+            {
+                $response = APIHelpers::createAPIResponse(true, 422, $validator->errors()->all(), null);
+                return response()->json([$response], 422);
+            }
             //check if job exsists or not
-            $check = APIHelpers::employerAuthentication($request->job_id);
+            $check = APIHelpers::employerAuthentication($request->jobId);
             if ($check == NULL)
             {
-                $response = APIHelpers::createAPIResponse(true, 401, 'Unauthorized Access', NULL);
-                return response()->json($response, 401);
+                $response = APIHelpers::createAPIResponse(true, 403, 'Forbidden Access', NULL);
+                return response()->json($response, 403);
             }
-            JobListing::where('id', $request->job_id)->delete();
-            $response = APIHelpers::createAPIResponse(false, 200, 'A job has been successfully deleted!!', NULL);
+            JobListing::where('id', $request->jobId)->delete();
+            $response = APIHelpers::createAPIResponse(false, 200, 'The job has been successfully deleted!!', NULL);
             DB::commit();
             return response()->json($response, 200);
         }
@@ -237,21 +334,48 @@ class JobController extends Controller
             DB::rollBack();
             if ($request->wantsJson())
             {
-                $response = APIHelpers::createAPIResponse(true, 400, $e->getMessage(), null);
-                return response()->json([$response], 400);
+                $response = APIHelpers::createAPIResponse(true, 500, $e->getMessage(), null);
+                return response()->json([$response], 500);
             }
         }
     }
 
 
     //Functions accessed by seekers and job-employers
+
+    //Search Job
+    /**
+     * @OA\Get(
+     *     path="/api/search",
+     *     summary="Search job",
+     *     tags={"Job Listings"},
+     *     @OA\Parameter(
+     *         name="keyword",
+     *         in="path",
+     *         description="keyword for searching the job",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/JobListing"))
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Internal Server Error"
+     *     )
+     * )
+     */
     public function search(Request $request)
     {
         try
         {
             $keyword = $request->keyword;
             $paginate = intval($request->get("length", env('PAGINATION', 5)));
-            $jobs = JobListing::select('job_listings.title as title', 'companies.name as company_name', 'companies.address as company_addr')
+            $jobs = JobListing::select('job_listings.id as jobId', 'job_listings.title as title', 'companies.name as companyName', 'companies.address as companyAddress')
                 ->leftjoin('companies', 'companies.id', 'job_listings.company_id')
                 ->groupBy('job_listings.id', 'companies.id')
                 ->orderBy('job_listings.id', 'DESC')
@@ -274,17 +398,35 @@ class JobController extends Controller
         {
             if ($request->wantsJson())
             {
-                $response = APIHelpers::createAPIResponse(true, 400, $e->getMessage(), null);
-                return response()->json([$response], 400);
+                $response = APIHelpers::createAPIResponse(true, 500, $e->getMessage(), null);
+                return response()->json([$response], 500);
             }
         }
     }
+
+    //Get job
+    /**
+     * @OA\Get(
+     *     path="/api/job-listings",
+     *     summary="Get list of active jobs listed ",
+     *     tags={"JobListings"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(type="object", @OA\Items(ref="#/components/schemas/JobListing"))
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Server Error"
+     *     )
+     * )
+     */
     public function getAllJobs(Request $request)
     {
         try
         {
             $paginate = intval($request->get("length", env('PAGINATION', 5)));
-            $jobs = JobListing::select('job_listings.*', 'companies.name as company', 'companies.address as location', 'companies.email as company_email')
+            $jobs = JobListing::select('job_listings.id as jobId', 'job_listings.title as title', 'job_listings.description as jobDescription', 'job_listings.application_instruction as applicationInstruction', 'job_listings.status as status', 'companies.name as company', 'companies.address as location', 'companies.email as companyEmail')
                 ->leftjoin('companies', 'companies.id', 'job_listings.company_id')
                 ->where('job_listings.status', 1)
                 ->groupBy('job_listings.id', 'companies.id')
@@ -297,8 +439,8 @@ class JobController extends Controller
         {
             if ($request->wantsJson())
             {
-                $response = APIHelpers::createAPIResponse(true, 400, $e->getMessage(), null);
-                return response()->json([$response], 400);
+                $response = APIHelpers::createAPIResponse(true, 500, $e->getMessage(), null);
+                return response()->json([$response], 500);
             }
         }
     }

@@ -18,7 +18,7 @@ Route::get('/home', [UserController::class, 'index']);
 Route::post('/login', [SessionController::class, 'postLogin']);
 Route::post('/sign-up', [SessionController::class, 'store']);
 
-//Job listings serach and get
+//Job listings search and get
 Route::get('/search', [JobController::class, 'search']);
 Route::get('/job-listings', [JobController::class, 'getAllJobs']);
 
