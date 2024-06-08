@@ -10,12 +10,52 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Helpers\APIHelpers;
 use Illuminate\Support\Facades\Validator;
+use OpenApi\Annotations as OA;
 
 
 
-
+/**
+ * @OA\Info(
+ *      version="1.0.0",
+ *      title="Laravel API Documentation",
+ *      description="API documentation for Laravel application",
+ *      @OA\Contact(
+ *          email="admin@example.com"
+ *      ),
+ *      @OA\License(
+ *          name="Apache 2.0",
+ *          url="http://www.apache.org/licenses/LICENSE-2.0.html"
+ *      )
+ * )
+ */
 class JobController extends Controller
 {
+
+
+    /**
+     * @OA\Get(
+     *     path="/api/employer/job-listings",
+     *     summary="Get list of job listed by employer",
+     *     tags={"JobListings"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/JobListing"))
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Unauthorized"
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Not Found"
+     *     )
+     * )
+     */
     public function getjobs(Request $request)
     {
         try
