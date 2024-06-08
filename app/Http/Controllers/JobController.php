@@ -26,7 +26,7 @@ class JobController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(type="object", @OA\Items(ref="#/components/schemas/JobListing"))
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/JobListing"))
      *     ),
      *     @OA\Response(
      *         response=500,
@@ -58,7 +58,7 @@ class JobController extends Controller
         }
     }
 
-    //Store Job
+    // Store Job
     /**
      * @OA\Post(
      *     path="/api/employer/job-store",
@@ -66,44 +66,25 @@ class JobController extends Controller
      *     tags={"Job Listings"},
      *      security={{"bearer_token":{}}},
      *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/JobListing")
-     *     ),
-     *     @OA\Parameter(
-     *         name="title",
-     *         in="path",
-     *         description="Title of the job",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="string"
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="description",
-     *         in="path",
-     *         description="Description of the job",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="string"
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="applicationInstruction",
-     *         in="path",
-     *         description="Application Instruction for the job",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="string"
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="title", type="string", example="Software Developer"),
+     *             @OA\Property(property="description", type="string", example="Develop and maintain software."),
+     *             @OA\Property(property="applicationInstruction", type="string", example="Please apply through our website.")
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(type="object", @OA\Items(ref="#/components/schemas/JobListing"))
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/JobListing"))
      *     ),
      *     @OA\Response(
      *         response=422,
      *         description="Validation Unsucessful"
+     *     ),
+     *     @OA\Response(
+     *         response=403,
+     *         description="Forbidden Access"
      *     ),
      *     @OA\Response(
      *         response=500,
@@ -160,48 +141,18 @@ class JobController extends Controller
      *      security={{"bearer_token":{}}},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/JobListing")
-     *     ),
-     *     @OA\Parameter(
-     *         name="jobId",
-     *         in="path",
-     *         description="Id of the job",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="title",
-     *         in="path",
-     *         description="Title of the job",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="string"
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="description",
-     *         in="path",
-     *         description="Description of the job",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="string"
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="applicationInstruction",
-     *         in="path",
-     *         description="Application Instruction for the job",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="string"
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="jobId", type="integer", example="1"),
+     *             @OA\Property(property="title", type="string", example="Software Developer"),
+     *             @OA\Property(property="description", type="string", example="Develop and maintain software."),
+     *             @OA\Property(property="applicationInstruction", type="string", example="Please apply through our website.")
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(type="object", @OA\Items(ref="#/components/schemas/JobListing"))
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/JobListing"))
      *     ),
      *     @OA\Response(
      *         response=422,
@@ -272,18 +223,12 @@ class JobController extends Controller
      *     tags={"Job Listings"},
      *      security={{"bearer_token":{}}},
      *     @OA\RequestBody(
-     *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/JobListing")
-     *     ),
-     *     @OA\Parameter(
-     *         name="jobId",
-     *         in="path",
-     *         description="Id of the job",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="integer"
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="jobId", type="integer", example="1"),
      *         )
      *     ),
+
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -413,7 +358,7 @@ class JobController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(type="object", @OA\Items(ref="#/components/schemas/JobListing"))
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/JobListing"))
      *     ),
      *     @OA\Response(
      *         response=500,

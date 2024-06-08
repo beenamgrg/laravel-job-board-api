@@ -9,7 +9,6 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\ReviewMail;
-use App\Mail\NotificationMail;
 use Illuminate\Bus\Batchable;
 use Illuminate\Support\Facades\Log;
 

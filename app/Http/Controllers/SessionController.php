@@ -40,30 +40,15 @@ class SessionController extends Controller
      *     tags={"Users"},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/User")
-     *     ),
-     *     @OA\Parameter(
-     *         name="email",
-     *         in="path",
-     *         description="User's Email",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="string"
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="password",
-     *         in="path",
-     *         description="User's password",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="string"
-     *         )
+     *         @OA\JsonContent(
+     *             @OA\Property(property="email", type="string", example="employer1@gmail.com"),
+     *             @OA\Property(property="password", type="string", example="employer"),
+     *      )
      *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(type="object", @OA\Items(ref="#/components/schemas/User"))
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/User"))
      *     ),
      *     @OA\Response(
      *         response=422,
@@ -139,7 +124,7 @@ class SessionController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(type="object", @OA\Items(ref="#/components/schemas/User"))
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/User"))
      *     ),
      *     @OA\Response(
      *         response=500,
@@ -177,57 +162,18 @@ class SessionController extends Controller
      *     tags={"Users"},
      *     @OA\RequestBody(
      *         required=true,
-     *         @OA\JsonContent(ref="#/components/schemas/User")
-     *     ),
-     *     @OA\Parameter(
-     *         name="firstName",
-     *         in="path",
-     *         description="User's Firstname",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="string"
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="lastName",
-     *         in="path",
-     *         description="User's lastName",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="string"
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="email",
-     *         in="path",
-     *         description="User's Email",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="string"
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="password",
-     *         in="path",
-     *         description="User's password",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="string"
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="confirmPassword",
-     *         in="path",
-     *         description="User's confirmPassword",
-     *         required=true,
-     *         @OA\Schema(
-     *             type="string"
-     *         )
+     *         @OA\JsonContent(
+     *             @OA\Property(property="firstname", type="string", example="John"),
+     *             @OA\Property(property="lastName", type="string", example="Doe"),
+     *             @OA\Property(property="email", type="string", example="johndoe@gmail.com"),
+     *             @OA\Property(property="password", type="string", example="employer"),
+     *             @OA\Property(property="confirmPassword", type="string", example="employer"),
+     *      )
      *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(type="object", @OA\Items(ref="#/components/schemas/User"))
+     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/User"))
      *     ),
      *     @OA\Response(
      *         response=422,
