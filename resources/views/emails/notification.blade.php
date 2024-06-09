@@ -11,5 +11,6 @@ Coverletter : <br>
 
 
 Thanks,<br>
+ {{$data['companyName']}}
 {{ config('app.name') ?? 'laravel' }} 
 </x-mail::message>

@@ -9,6 +9,8 @@ use Exception;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+
 
 /**
  * @OA\Info(
@@ -216,7 +218,7 @@ class SessionController extends Controller
             $user = new User();
             $user->name = $request->firstName . ' ' . $request->lastName;
             $user->email = $request->email;
-            $user->password = $request->password;
+            $user->password = Hash::make($request->password);
             $user->role = 'seeker';
             $user->save();
             $data = array(

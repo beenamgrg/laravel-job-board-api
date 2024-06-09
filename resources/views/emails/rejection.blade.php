@@ -7,4 +7,5 @@ We want to thank you again for your interest in working with us and wish you the
 
 Thanks,<br>
 {{$data['company_name']}}
+{{ config('app.name') ?? 'laravel' }} 
 </x-mail::message>

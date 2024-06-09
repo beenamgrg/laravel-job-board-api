@@ -8,6 +8,7 @@ use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\AdminCheck;
+use App\Http\Middleware\SuperAdminCheck;
 
 Route::get('/user', function (Request $request)
 {
@@ -18,10 +19,12 @@ Route::get('/home', [UserController::class, 'index']);
 Route::post('/login', [SessionController::class, 'postLogin']);
 Route::post('/sign-up', [SessionController::class, 'store']);
 
+//Routes for COMPANY STORE
+Route::post('/company-store', [CompanyController::class, 'store']);
+
 //Job listings search and get
 Route::get('/search', [JobController::class, 'search']);
 Route::get('/job-listings', [JobController::class, 'getAllJobs']);
-
 
 Route::middleware('auth:api')->group(function ()
 {
@@ -36,9 +39,6 @@ Route::middleware('auth:api')->group(function ()
         Route::put('/job-update', [JobController::class, 'update']);
         Route::delete('/job-delete', [JobController::class, 'delete']);
 
-        //Routes for COMPANY STORE
-        Route::post('/company-store', [CompanyController::class, 'store']);
-
         //Route to get the active submissions
         Route::get('/job-applications', [JobApplicationController::class, 'getApplication']);
 
@@ -48,5 +48,11 @@ Route::middleware('auth:api')->group(function ()
         //Route to approve and reject the job applications
         Route::post('/job-application-approve', [JobApplicationController::class, 'approve']);
         Route::post('/job-application-reject', [JobApplicationController::class, 'reject']);
+    });
+
+    Route::prefix('super-admin')->middleware([SuperAdminCheck::class])->group(function ()
+    {
+        //Route for company activation
+        Route::post('/company-activation', [CompanyController::class, 'activateCompany']);
     });
 });

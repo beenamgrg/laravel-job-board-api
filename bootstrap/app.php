@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias(
             [
                 'adminCheck' => \App\Http\Middleware\AdminCheck::class,
+                'superAdminCheck' => \App\Http\Middleware\SuperAdminCheck::class,
 
             ]
         );
