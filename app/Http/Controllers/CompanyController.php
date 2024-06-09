@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\ActivationMail;
-use App\Mail\NotificationMail;
+use App\Mail\CompanyActivationMail;
+use App\Mail\CompanyRegistrationMail;
 
 
 
@@ -99,7 +99,7 @@ class CompanyController extends Controller
 
             $company = new Company();
             $company->name = $request->companyName;
-            $company->slug = str_replace(' ', '-', strtolower($request->name));
+            $company->slug = str_replace(' ', '-', strtolower($request->companyName));
             $company->email = $request->companyEmail;
             $company->address = $request->companyAddress;
             $company->phone = $request->companyPhone;
@@ -107,7 +107,11 @@ class CompanyController extends Controller
             $company->employer_id = $user->id;
             $company->status = 0;
             $company->save();
+            $subjectLine = "Registration of New Company";
+            $viewName = 'emails.company-registration';
             $response = APIHelpers::createAPIResponse(false, 200, 'Your company has been registered.We will soon contact you after its activation', $company->name);
+            $recipient = env('MAIL_FROM_ADDRESS');
+            Mail::to($recipient)->send(new CompanyRegistrationMail($subjectLine, $viewName, $company->id));
             DB::commit();
             return response()->json($response, 200);
         }
@@ -196,7 +200,7 @@ class CompanyController extends Controller
             $viewName = ($request->activationStatus == 1) ? 'emails.activation' : 'emails.deactivation';
             $response = ($request->activationStatus == 1) ? APIHelpers::createAPIResponse(false, 200, 'The company has been activated successfully!!', $data) : APIHelpers::createAPIResponse(false, 200, 'The company has been deactivated successfully!!', $data);
             DB::commit();
-            Mail::to($data->employerEmail)->send(new ActivationMail($subjectLine, $viewName, $data->employerEmail));
+            Mail::to($data->employerEmail)->send(new CompanyActivationMail($subjectLine, $viewName, $data->employerEmail));
             return response()->json($response, 200);
         }
         catch (Exception $e)

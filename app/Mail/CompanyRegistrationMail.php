@@ -2,24 +2,23 @@
 
 namespace App\Mail;
 
-use Illuminate\Bus\Queueable;
+use App\Models\Company;
 use App\Models\EmailLog;
+use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use App\Models\JobApplication;
 
-
-class ReviewMail extends Mailable implements ShouldQueue
+class CompanyRegistrationMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
     protected $subjectLine;
     protected $viewName;
     protected $data;
-    protected $user;
+    protected $companyId;
 
     /**
      * Create a new message instance.
@@ -28,12 +27,11 @@ class ReviewMail extends Mailable implements ShouldQueue
      * @param string $viewName
      * @param array $data
      */
-    public function __construct($subjectLine, $viewName, $data = [], $user)
+    public function __construct($subjectLine, $viewName, $companyId)
     {
         $this->subjectLine = $subjectLine;
         $this->viewName = $viewName;
-        $this->data = $data;
-        $this->user = $user;
+        $this->companyId = $companyId;
     }
 
     /**
@@ -54,23 +52,21 @@ class ReviewMail extends Mailable implements ShouldQueue
      */
     public function build()
     {
-        $bladeData = JobApplication::select('job_applications.*', 'users.name as applicant_name', 'users.email as applicant_email', 'companies.name as company_name', 'companies.email as company_email', 'job_listings.title as job_title')
-            ->leftjoin('job_listings', 'job_listings.id', 'job_applications.job_id')
-            ->leftjoin('users', 'users.id', 'job_applications.user_id')
-            ->leftjoin('companies', 'companies.employer_id', 'users.id')
-            ->where('job_applications.id', $this->data['id'])
+        $data = Company::select('companies.name as company_name', 'companies.email as company_email', 'companies.phone as company_phone', 'companies.address as company_address', 'users.name as employer_name', 'users.email as employer_email')
+            ->leftJoin('users', 'users.id', 'companies.employer_id')
+            ->where('companies.id', $this->companyId)
             ->first();
+        $recipient = env('MAIL_FROM_ADDRESS');
         EmailLog::create([
-            'recipient_email' => $this->user,
+            'recipient_email' => $recipient,
             'subject' => $this->subjectLine,
-            'relation' => $bladeData->company_name . " - " . $bladeData->job_title,
+            'relation' => $data->company_name,
             'sent_at' => now(),
         ]);
-
         return $this->subject($this->subjectLine)
-            ->to($this->user)
+            ->to($recipient)
             ->markdown($this->viewName)
-            ->with(['data' => $bladeData]);
+            ->with(['data' => $data]);
     }
 
     /**

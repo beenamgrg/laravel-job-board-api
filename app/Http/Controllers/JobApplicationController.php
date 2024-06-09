@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\JobApplication;
-use App\Jobs\SendReviewEmail;
+use App\Jobs\SendReviewMail;
 use App\Models\JobListing;
 use App\Models\User;
 use App\Models\Company;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Helpers\APIHelpers;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\NotificationMail;
+use App\Mail\JobApplicationNotificationMail;
 use Exception;
 
 class JobApplicationController extends Controller
@@ -128,7 +128,7 @@ class JobApplicationController extends Controller
             $subjectLine = "Job Application Submission Notification";
             $viewName = 'emails.notification';
             DB::commit();
-            Mail::to($employer->employerEmail)->send(new NotificationMail($subjectLine, $viewName, $jobApplication, $employer->employerEmail));
+            Mail::to($employer->employerEmail)->send(new JobApplicationNotificationMail($subjectLine, $viewName, $jobApplication, $employer->employerEmail));
             return response()->json($response, 200);
         }
 
@@ -297,8 +297,8 @@ class JobApplicationController extends Controller
             DB::commit();
             $subjectLine = 'Job Application Review';
             $viewName = 'emails.approval';
-            // SendReviewEmail::dispatch($subjectLine, $viewName, $data, $data->applicant_email);
-            SendReviewEmail::dispatch($subjectLine, $viewName, $data, $data->applicant_email)->delay(now()->addMinutes(10));
+            // SendReviewMail::dispatch($subjectLine, $viewName, $data, $data->applicant_email);
+            SendReviewMail::dispatch($subjectLine, $viewName, $data, $data->applicant_email)->delay(now()->addMinutes(10));
             return response()->json($response, 200);
         }
         catch (Exception $e)
@@ -403,7 +403,7 @@ class JobApplicationController extends Controller
             $subjectLine = 'Job Application Review';
             $viewName = 'emails.rejection';
             // dd($mailData);
-            SendReviewEmail::dispatch($subjectLine, $viewName, $data, $data->applicant_email)->delay(now()->addMinutes(10));
+            SendReviewMail::dispatch($subjectLine, $viewName, $data, $data->applicant_email)->delay(now()->addMinutes(10));
             return response()->json($response, 200);
         }
         catch (Exception $e)

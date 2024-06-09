@@ -8,12 +8,12 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\ReviewMail;
+use App\Mail\JobApplicationReviewMail;
 use Illuminate\Bus\Batchable;
 use Illuminate\Support\Facades\Log;
 
 
-class SendReviewEmail implements ShouldQueue
+class SendReviewMail implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Batchable;
 
@@ -39,6 +39,6 @@ class SendReviewEmail implements ShouldQueue
      */
     public function handle(): void
     {
-        Mail::to($this->user)->send(new ReviewMail($this->subjectLine, $this->viewName, $this->data, $this->user));
+        Mail::to($this->user)->send(new JobApplicationReviewMail($this->subjectLine, $this->viewName, $this->data, $this->user));
     }
 }
