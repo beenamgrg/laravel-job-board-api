@@ -181,7 +181,7 @@ class CompanyController extends Controller
                 ->leftJoin('companies', 'users.id', 'companies.employer_id')
                 ->where('companies.id', $request->companyId)
                 ->first();
-            if ($data->companyStatus == 1)
+            if ($request->activationStatus == 1 && $data->companyStatus == 1)
             {
                 $response = APIHelpers::createAPIResponse(true, 400, 'This company has already been activated before!!', $data);
                 return response()->json($response, 400);
@@ -192,9 +192,9 @@ class CompanyController extends Controller
             $company = Company::where('id', $request->companyId)->first();
             $company->status = ($request->activationStatus == 1) ? 1 : 0;
             $company->save();
-            $subjectLine = "Account Activation Mail";
+            $subjectLine = ($request->activationStatus == 1) ? "Account Activation Email" : "Account Deactivation Email";
             $viewName = ($request->activationStatus == 1) ? 'emails.activation' : 'emails.deactivation';
-            $response = APIHelpers::createAPIResponse(false, 200, 'The company has been activated successfully!!', $data);
+            $response = ($request->activationStatus == 1) ? APIHelpers::createAPIResponse(false, 200, 'The company has been activated successfully!!', $data) : APIHelpers::createAPIResponse(false, 200, 'The company has been deactivated successfully!!', $data);
             DB::commit();
             Mail::to($data->employerEmail)->send(new ActivationMail($subjectLine, $viewName, $data->employerEmail));
             return response()->json($response, 200);

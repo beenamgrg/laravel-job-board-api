@@ -6,6 +6,7 @@ use App\Models\JobApplication;
 use App\Jobs\SendReviewEmail;
 use App\Models\JobListing;
 use App\Models\User;
+use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
@@ -76,6 +77,12 @@ class JobApplicationController extends Controller
             {
                 $response = APIHelpers::createAPIResponse(true, 422, $validator->errors()->all(), null);
                 return response()->json([$response], 422);
+            }
+            //Submission restricted for the e,ployer who has posted the job
+            if (auth()->user()->id == Company::find($request->jobId)->employer_id)
+            {
+                $response = APIHelpers::createAPIResponse(true, 400, 'Bad Request!', Auth::user()->name);
+                return response()->json($response, 400);
             }
 
             //Check if the job exsists

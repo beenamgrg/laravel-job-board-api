@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\JobApplication;
+use App\Models\EmailLog;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -52,7 +53,7 @@ class NotificationMail extends Mailable implements ShouldQueue
      */
     public function build()
     {
-        $bladeData = JobApplication::select('job_applications.resume as applicantResume', 'job_applications.cover_letter as applicantCoverLetter', 'applicants.name as applicantName', 'applicants.email as applicantEmail', 'job_listings.title as jobTitle', 'employers.name as employerName', 'companies.name as companyName')
+        $bladeData = JobApplication::select('job_applications.resume as applicantResume', 'job_applications.cover_letter as applicantCoverLetter', 'applicants.name as applicantName', 'applicants.email as applicantEmail', 'job_listings.title as jobTitle', 'employers.email as employerEmail', 'employers.name as employerName', 'companies.name as companyName')
             ->leftJoin('job_listings', 'job_listings.id', 'job_applications.job_id')
             ->leftJoin('companies', 'companies.id', 'job_listings.company_id')
             ->leftJoin('users as applicants', 'applicants.id', 'job_applications.user_id')
@@ -60,6 +61,12 @@ class NotificationMail extends Mailable implements ShouldQueue
             ->where('job_applications.user_id', $this->data['user_id'])
             ->where('job_applications.job_id', $this->data['job_id'])
             ->first();
+        EmailLog::create([
+            'recipient_email' => $this->user,
+            'subject' => $this->subjectLine,
+            'relation' => $bladeData-> companyName . " - " . $bladeData->jobTitle,
+            'sent_at' => now(),
+        ]);
 
         return $this->subject($this->subjectLine)
             ->to($this->user)

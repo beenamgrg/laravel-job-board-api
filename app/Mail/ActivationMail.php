@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Company;
+use App\Models\EmailLog;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -55,6 +56,12 @@ class ActivationMail extends Mailable implements ShouldQueue
             ->leftJoin('users', 'users.id', 'companies.employer_id')
             ->where('users.email', $this->user)
             ->first();
+        EmailLog::create([
+            'recipient_email' => $this->user,
+            'subject' => $this->subjectLine,
+            'relation' => $data->companyName,
+            'sent_at' => now(),
+        ]);
         return $this->subject($this->subjectLine)
             ->to($this->user)
             ->markdown($this->viewName)

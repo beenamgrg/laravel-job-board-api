@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
+use App\Models\EmailLog;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -59,6 +60,13 @@ class ReviewMail extends Mailable implements ShouldQueue
             ->leftjoin('companies', 'companies.employer_id', 'users.id')
             ->where('job_applications.id', $this->data['id'])
             ->first();
+        EmailLog::create([
+            'recipient_email' => $this->user,
+            'subject' => $this->subjectLine,
+            'relation' => $bladeData->company_name . " - " . $bladeData->job_title,
+            'sent_at' => now(),
+        ]);
+
         return $this->subject($this->subjectLine)
             ->to($this->user)
             ->markdown($this->viewName)
