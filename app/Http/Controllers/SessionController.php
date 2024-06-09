@@ -41,14 +41,20 @@ class SessionController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             @OA\Property(property="email", type="string", example="employer1@gmail.com"),
-     *             @OA\Property(property="password", type="string", example="employer"),
+     *             @OA\Property(property="email", type="string", example="employer1@gmail.com", description="User Email"),
+     *             @OA\Property(property="password", type="string", example="employer", description="User Password"),
      *      )
      *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/User"))
+     *         @OA\JsonContent(
+     *             @OA\Property(property="id", type="integer", example="1", description="User id"),
+     *             @OA\Property(property="name", type="string", example="John Doe", description="User Name"),
+     *             @OA\Property(property="email", type="string", example="johndoe@gmail.com", description="User Email"),
+     *             @OA\Property(property="role", type="enum", example="seeker", description="User Role"),
+     *             @OA\Property(property="status", type="boolean", example="1",description="User Status"),
+     *      )     
      *     ),
      *     @OA\Response(
      *         response=422,
@@ -163,17 +169,21 @@ class SessionController extends Controller
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             @OA\Property(property="firstname", type="string", example="John"),
-     *             @OA\Property(property="lastName", type="string", example="Doe"),
-     *             @OA\Property(property="email", type="string", example="johndoe@gmail.com"),
-     *             @OA\Property(property="password", type="string", example="employer"),
-     *             @OA\Property(property="confirmPassword", type="string", example="employer"),
+     *             @OA\Property(property="firstname", type="string", example="John", description="User firstName"),
+     *             @OA\Property(property="lastName", type="string", example="Doe", description="User lastNamae"),
+     *             @OA\Property(property="email", type="string", example="johndoe@gmail.com", description="User email"),
+     *             @OA\Property(property="password", type="string", example="employer", description="User password"),
+     *             @OA\Property(property="confirmPassword", type="string", example="employer", description="User confirm password"),
      *      )
      *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/User"))
+     *         @OA\JsonContent(
+     *             @OA\Property(property="id", type="integer", example="1", description="user id"),
+     *             @OA\Property(property="name", type="string", example="John Doe"),
+     *             @OA\Property(property="email", type="string", example="johndoe@gmail.com"),
+     *      )     
      *     ),
      *     @OA\Response(
      *         response=422,
@@ -210,6 +220,7 @@ class SessionController extends Controller
             $user->role = 'seeker';
             $user->save();
             $data = array(
+                'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
             );

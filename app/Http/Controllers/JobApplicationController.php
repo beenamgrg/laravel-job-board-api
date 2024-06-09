@@ -22,20 +22,27 @@ class JobApplicationController extends Controller
     /**
      * @OA\Post(
      *     path="/api/submit-job-application'",
-     *     summary="Store job application",
-     *     tags={"Job Listings"},
+     *     summary="Submit job application",
+     *     tags={"Job Applications"},
      *      security={{"bearer_token":{}}},
      *     @OA\RequestBody(
      *         @OA\JsonContent(
-     *             @OA\Property(property="jobId", type="integer", example="Software Developer"),
-     *             @OA\Property(property="resume", type="file", example="Software Developer"),
-     *             @OA\Property(property="coverLetter", type="string", example="Develop and maintain software."),
+     *             @OA\Property(property="jobId", type="integer", example="2", description="Job Applicatio Id"),
+     *             @OA\Property(property="resume", type="file", example="Sample.pdf", description="Applicant's Resume"),
+     *             @OA\Property(property="coverLetter", type="string", example="Develop and maintain software.", description="Applicant's Cover Letter"),
      *      )
      *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/JobListing"))
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="id", type="integer", example="1", description="Job Application Id"),
+     *             @OA\Property(property="user_id", type="integer", example="1", description="Job Application Applicant Id"),
+     *             @OA\Property(property="job_id", type="integer", example="1", description="Job Id"),
+     *             @OA\Property(property="resume", type="string", example="laravel Developer", description="Job Applicant's Resume"),
+     *             @OA\Property(property="cover_letter", type="string", example="Firefly Tech", description="Job Applicant's Cover Letter"),
+     *      )     
      *     ),
      *     @OA\Response(
      *         response=422,
@@ -139,8 +146,24 @@ class JobApplicationController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/JobListing"))
-     *     ),
+     *         @OA\JsonContent(
+     *             type = "object",
+     *             @OA\Property(property="id", type="integer", example="2", description="Job Application Id"),
+     *             @OA\Property(property="resume", type="file", example="Sample.pdf", description="Job Applicant's Resume"),
+     *             @OA\Property(property="cover_letter", type="string", example="Develop and maintain software.", description="Job Applicant's Coverletter"),
+     *             @OA\Property(property="user_id", type="integer", example="2", description="Job Job Applicant's Id"),
+     *             @OA\Property(property="job_id", type="integer", example="2", description="Job Application's Company Id"),
+     *             @OA\Property(property="is_approved", type="boolean", example="0", description="Job Application's Approval Status"),
+     *             @OA\Property(property="is_rejected", type="boolean", example="0", description="Job Application's Rejection Status"),
+     *             @OA\Property(property="status", type="boolean", example="1", description="Job Application's Status"),
+     *             @OA\Property(property="job_title", type="string", example="Laravel Developer", description="Job Title"),
+     *             @OA\Property(property="company", type="string", example="Firefly Tech", description="Job Application Company Name"),
+     *             @OA\Property(property="company_email", type="string", example="company@gmail.com", description="Job Application Company Email"),
+     *             @OA\Property(property="applicant_name", type="string", example="seeker", description="Job Application Applicant Name"),
+     *             @OA\Property(property="applicant_email", type="string", example="applicant@gmail.com", description="Job Application Applicant Name"),
+     * 
+     *          )     
+     **     ),
      *     @OA\Response(
      *         response=500,
      *         description="Internal Server Error"
@@ -153,7 +176,7 @@ class JobApplicationController extends Controller
         try
         {
             $paginate = intval($request->get("length", env('PAGINATION', 5)));
-            $job_applications = JobApplication::select('job_applications.*', 'job_listings.title as job_title', 'companies.name as company', 'companies.email as company_email', 'users.name as applicant', 'users.email as applicant_email')
+            $job_applications = JobApplication::select('job_applications.*', 'job_listings.title as job_title', 'companies.name as company', 'companies.email as company_email', 'users.name as applicant_name', 'users.email as applicant_email')
                 ->leftjoin('job_listings', 'job_listings.id', 'job_applications.job_id')
                 ->leftjoin('users', 'users.id', 'job_applications.user_id')
                 ->leftjoin('companies', 'companies.id', 'job_listings.company_id')
@@ -192,7 +215,23 @@ class JobApplicationController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/JobListing"))
+     *         @OA\JsonContent(
+     *             type = "object",
+     *             @OA\Property(property="id", type="integer", example="2", description="Job Application Id"),
+     *             @OA\Property(property="resume", type="file", example="Sample.pdf", description="Job Application Resume"),
+     *             @OA\Property(property="cover_letter", type="string", example="Develop and maintain software.", description="Job Application Coverletter"),
+     *             @OA\Property(property="user_id", type="integer", example="2", description="Job Application Applicant Id"),
+     *             @OA\Property(property="job_id", type="integer", example="2", description="Job Application Job Id"),
+     *             @OA\Property(property="is_approved", type="boolean", example="0", description="Job Application Approval Status"),
+     *             @OA\Property(property="is_rejected", type="boolean", example="0", description="Job Application Rejection Status"),
+     *             @OA\Property(property="status", type="boolean", example="1", description="Job Application Status"),
+     *             @OA\Property(property="job_title", type="string", example="Laravel Developer", description="Job Application Job Title"),
+     *             @OA\Property(property="company", type="string", example="Firefly Tech", description="Job's Company Name"),
+     *             @OA\Property(property="company_email", type="string", example="company@gmail.com", description="Job's Company Email"),
+     *             @OA\Property(property="applicant_name", type="string", example="seeker", description="Job Applicant Name"),
+     *             @OA\Property(property="applicant_email", type="string", example="applicant@gmail.com", description="Job Applicant Email"),
+     * 
+     *          )     
      *     ),
      *     @OA\Response(
      *         response=422,
@@ -227,7 +266,7 @@ class JobApplicationController extends Controller
                 return response()->json([$response], 422);
             }
             $jobApplication = JobApplication::findOrFail($request->jobApplicationId);
-            $check = APIHelpers::employerAuthentication($request->jobId);
+            $check = APIHelpers::employerAuthentication($jobApplication->job_id);
             if ($check == NULL)
             {
                 $response = APIHelpers::createAPIResponse(true, 403, 'Forbidden Access', NULL);
@@ -282,7 +321,23 @@ class JobApplicationController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/JobListing"))
+     *         @OA\JsonContent(
+     *             type = "object",
+     *             @OA\Property(property="id", type="integer", example="2", description="Job Application Id"),
+     *             @OA\Property(property="resume", type="file", example="Sample.pdf", description="Job Application Resume"),
+     *             @OA\Property(property="cover_letter", type="string", example="Develop and maintain software.", description="Job Application Coverletter"),
+     *             @OA\Property(property="user_id", type="integer", example="2", description="Job Application Applicant Id"),
+     *             @OA\Property(property="job_id", type="integer", example="2", description="Job Application Job Id"),
+     *             @OA\Property(property="is_approved", type="boolean", example="0", description="Job Application Approval Status"),
+     *             @OA\Property(property="is_rejected", type="boolean", example="0", description="Job Application Rejection Status"),
+     *             @OA\Property(property="status", type="boolean", example="1", description="Job Application Status"),
+     *             @OA\Property(property="job_title", type="string", example="Laravel Developer", description="Job Application Job Title"),
+     *             @OA\Property(property="company", type="string", example="Firefly Tech", description="Job's Company Name"),
+     *             @OA\Property(property="company_email", type="string", example="company@gmail.com", description="Job's Company Email"),
+     *             @OA\Property(property="applicant_name", type="string", example="seeker", description="Job Applicant Name"),
+     *             @OA\Property(property="applicant_email", type="string", example="applicant@gmail.com", description="Job Applicant Email"),
+     * 
+     *          )     
      *     ),
      *     @OA\Response(
      *         response=422,

@@ -26,7 +26,17 @@ class JobController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/JobListing"))
+     *         @OA\JsonContent(
+     *             @OA\Property(property="id", type="integer", example="1", description="Job id"),
+     *             @OA\Property(property="title", type="string", example="laravel Developer", description="Job title"),
+     *             @OA\Property(property="company_id", type="integer", example="1", description="Job's company id"),
+     *             @OA\Property(property="descriptiion", type="string", example="Description for job", description="Job Description"),
+     *             @OA\Property(property="application_instruction", type="string", example="Instruction for Job", description="Job Application Instruction"),
+     *             @OA\Property(property="status", type="boolean", example="j1", description="Job Status"),
+     *             @OA\Property(property="companyName", type="string", example="Firefly Tech", description="Company name of the job"),
+     *             @OA\Property(property="companyAddress", type="string", example="Pokhara", description="Company address of the job"),
+     *             @OA\Property(property="companyEmail", type="string", example="johndoe@gmail.com", description="Company email of the job"),
+     *      )     
      *     ),
      *     @OA\Response(
      *         response=500,
@@ -39,7 +49,7 @@ class JobController extends Controller
         try
         {
             $paginate = intval($request->get("length", env('PAGINATION', 5)));
-            $jobs = JobListing::select('job_listings.*', 'companies.name as company', 'companies.address as location', 'companies.email as company_email')
+            $jobs = JobListing::select('job_listings.*', 'companies.name as companyName', 'companies.address as companyAddress', 'companies.email as companyEmail')
                 ->leftjoin('companies', 'companies.id', 'job_listings.company_id')
                 ->where('companies.employer_id', Auth::user()->id)
                 ->groupBy('job_listings.id', 'companies.id')
@@ -68,15 +78,22 @@ class JobController extends Controller
      *     @OA\RequestBody(
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="title", type="string", example="Software Developer"),
-     *             @OA\Property(property="description", type="string", example="Develop and maintain software."),
-     *             @OA\Property(property="applicationInstruction", type="string", example="Please apply through our website.")
+     *             @OA\Property(property="title", type="string", example="Software Developer", description="Job title"),
+     *             @OA\Property(property="description", type="string", example="Develop and maintain software.", description="Job Description"),
+     *             @OA\Property(property="applicationInstruction", type="string", example="Please apply through our website.", description="Job applicatopn Instruction")
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/JobListing"))
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="id", type="integer", example="1", description="Job id"),
+     *             @OA\Property(property="title", type="string", example="Software Developer", description="Job Title"),
+     *             @OA\Property(property="company_id", type="integer", example="1", description="Job Company Id"),
+     *             @OA\Property(property="description", type="string", example="Develop and maintain software.", description="Job Description"),
+     *             @OA\Property(property="application_instruction", type="string", example="Please apply through our website.", description="Job Application Instruction")
+     *         )     
      *     ),
      *     @OA\Response(
      *         response=422,
@@ -152,7 +169,14 @@ class JobController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/JobListing"))
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="id", type="integer", example="1", description="Job id"),
+     *             @OA\Property(property="title", type="string", example="Software Developer", description="Job Title"),
+     *             @OA\Property(property="company_id", type="integer", example="1", description="Job Company Id"),
+     *             @OA\Property(property="description", type="string", example="Develop and maintain software.", description="Job Description"),
+     *             @OA\Property(property="application_instruction", type="string", example="Please apply through our website.", description="Job Application Instruction")
+     *         )     
      *     ),
      *     @OA\Response(
      *         response=422,
@@ -225,7 +249,7 @@ class JobController extends Controller
      *     @OA\RequestBody(
      *         @OA\JsonContent(
      *             type="object",
-     *             @OA\Property(property="jobId", type="integer", example="1"),
+     *             @OA\Property(property="jobId", type="integer", example="1", description="Job id"),
      *         )
      *     ),
 
@@ -306,7 +330,13 @@ class JobController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/JobListing"))
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="jobId", type="integer", example="1", description="Job id"),
+     *             @OA\Property(property="title", type="string", example="laravel Developer", description="Job Title"),
+     *             @OA\Property(property="companyName", type="string", example="Firefly Tech", description="Job Company Name"),
+     *             @OA\Property(property="companyAddress", type="string", example="Pokhara", description="Job Company Address"),
+     *      )     
      *     ),
      *     @OA\Response(
      *         response=500,
@@ -358,7 +388,17 @@ class JobController extends Controller
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
-     *         @OA\JsonContent(type="array", @OA\Items(ref="#/components/schemas/JobListing"))
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="jobId", type="integer", example="1", description="Job id"),
+     *             @OA\Property(property="title", type="string", example="laravel Developer", description="Job Title"),
+     *             @OA\Property(property="jobDescription", type="string", example="Description for job", description="Job Description"),
+     *             @OA\Property(property="applicationInstruction", type="string", example="Instruction for Job", description="Job Application Instruction"),
+     *             @OA\Property(property="companyName", type="string", example="Firefly Tech", description="Job Company Name"),
+     *             @OA\Property(property="companyAddress", type="string", example="Pokhara", description="Job Company Address"),
+     *             @OA\Property(property="companyEmail", type="string", example="firefly123@yopmail.com", description="Job Company Email"),
+     *             @OA\Property(property="status", type="boolean", example="1", description="Job Status"),
+     *      )     
      *     ),
      *     @OA\Response(
      *         response=500,
@@ -371,7 +411,7 @@ class JobController extends Controller
         try
         {
             $paginate = intval($request->get("length", env('PAGINATION', 5)));
-            $jobs = JobListing::select('job_listings.id as jobId', 'job_listings.title as title', 'job_listings.description as jobDescription', 'job_listings.application_instruction as applicationInstruction', 'job_listings.status as status', 'companies.name as company', 'companies.address as location', 'companies.email as companyEmail')
+            $jobs = JobListing::select('job_listings.id as jobId', 'job_listings.title as title', 'job_listings.description as jobDescription', 'job_listings.application_instruction as applicationInstruction', 'job_listings.status as status', 'companies.name as companyName', 'companies.address as companyAddress', 'companies.email as companyEmail')
                 ->leftjoin('companies', 'companies.id', 'job_listings.company_id')
                 ->where('job_listings.status', 1)
                 ->groupBy('job_listings.id', 'companies.id')
