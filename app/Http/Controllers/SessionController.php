@@ -25,11 +25,10 @@ use Illuminate\Support\Facades\Hash;
  *          url="http://www.apache.org/licenses/LICENSE-2.0.html"
  *      )
  * )
- *  * @OA\SecurityScheme(
- *     securityScheme="BearerAuth",
- *     type="http",
- *     scheme="bearer",
- *     bearerFormat="JWT"
+ * @OAS\SecurityScheme(
+ *      securityScheme="sanctum",
+ *      type="http",
+ *      scheme="bearer"
  * )
  */
 class SessionController extends Controller
@@ -39,7 +38,7 @@ class SessionController extends Controller
      * @OA\Post(
      *     path="/api/login",
      *     summary="User Login",
-     *     tags={"Users"},
+     *     tags={"Authentication"},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
@@ -127,8 +126,8 @@ class SessionController extends Controller
      * @OA\Post(
      *     path="/api/logout",
      *     summary="User Logout",
-     *     tags={"Users"},
-     *      security={{"bearer_token":{}}},
+     *     tags={"Authentication"},
+     *      security={ {"sanctum": {} }},
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -167,11 +166,11 @@ class SessionController extends Controller
      * @OA\Post(
      *     path="/api/sign-up",
      *     summary="User Sign-up",
-     *     tags={"Users"},
+     *     tags={"Authentication"},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             @OA\Property(property="firstname", type="string", example="John", description="User firstName"),
+     *             @OA\Property(property="firstName", type="string", example="John", description="User firstName"),
      *             @OA\Property(property="lastName", type="string", example="Doe", description="User lastNamae"),
      *             @OA\Property(property="email", type="string", example="johndoe@gmail.com", description="User email"),
      *             @OA\Property(property="password", type="string", example="employer", description="User password"),
@@ -225,6 +224,7 @@ class SessionController extends Controller
                 'id' => $user->id,
                 'name' => $user->name,
                 'email' => $user->email,
+                'role' => $user->role,
             );
             if ($request->wantsJson())
             {

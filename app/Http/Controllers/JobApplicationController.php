@@ -22,16 +22,33 @@ class JobApplicationController extends Controller
     //Submit job application
     /**
      * @OA\Post(
-     *     path="/api/submit-job-application'",
+     *     path="/api/submit-job-application",
      *     summary="Submit job application",
      *     tags={"Job Applications"},
-     *      security={{"bearer_token":{}}},
+     *      security={ {"sanctum": {} }},
      *     @OA\RequestBody(
-     *         @OA\JsonContent(
-     *             @OA\Property(property="jobId", type="integer", example="2", description="Job Applicatio Id"),
-     *             @OA\Property(property="resume", type="file", example="Sample.pdf", description="Applicant's Resume"),
-     *             @OA\Property(property="coverLetter", type="string", example="Develop and maintain software.", description="Applicant's Cover Letter"),
-     *      )
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="multipart/form-data",
+     *             @OA\Schema(
+     *                 @OA\Property(
+     *                     property="jobId",
+     *                     description="Id of Job",
+     *                     type="integer",
+     *                 ),
+     *                 @OA\Property(
+     *                     property="resume",
+     *                     description="File to upload",
+     *                     type="string",
+     *                     format="binary"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="coverLetter",
+     *                     description="Cover letter for job",
+     *                     type="string",
+     *                 ),
+     *             )
+     *         )
      *     ),
      *     @OA\Response(
      *         response=200,
@@ -78,8 +95,9 @@ class JobApplicationController extends Controller
                 $response = APIHelpers::createAPIResponse(true, 422, $validator->errors()->all(), null);
                 return response()->json([$response], 422);
             }
-            //Submission restricted for the e,ployer who has posted the job
-            if (auth()->user()->id == Company::find($request->jobId)->employer_id)
+            $restriction = JobListing::select('companies.employer_id')->leftJoin('companies', 'companies.id', 'job_listings.company_id')->where('job_listings.id', $request->jobId)->first();
+            //Submission restricted for the employer who has posted the job
+            if (auth()->user()->id == $restriction->employer_id)
             {
                 $response = APIHelpers::createAPIResponse(true, 400, 'Bad Request!', Auth::user()->name);
                 return response()->json($response, 400);
@@ -147,9 +165,9 @@ class JobApplicationController extends Controller
     /**
      * @OA\Get(
      *     path="/api/employer/job-applications",
-     *     summary="Employers get all active job submissions posted by self",
+     *     summary="Employers get all active job submissions for its company",
      *     tags={"Job Applications"},
-     *      security={{"bearer_token":{}}},
+     *      security={ {"sanctum": {} }},
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -209,10 +227,10 @@ class JobApplicationController extends Controller
     //Approve Job-application
     /**
      * @OA\Post(
-     *     path="/api/ob-application-approve",
+     *     path="/api/employer/job-application-approve",
      *     summary="Approve the job-applications",
      *     tags={"Job Applications"},
-     *      security={{"bearer_token":{}}},
+     *      security={ {"sanctum": {} }},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
@@ -315,10 +333,10 @@ class JobApplicationController extends Controller
     //Reject Job-application
     /**
      * @OA\Post(
-     *     path="/api/ob-application-reject",
+     *     path="/api/employer/job-application-reject",
      *     summary="Reject the job-applications",
      *     tags={"Job Applications"},
-     *      security={{"bearer_token":{}}},
+     *      security={ {"sanctum": {} }},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(

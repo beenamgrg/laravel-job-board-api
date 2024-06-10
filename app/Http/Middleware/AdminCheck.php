@@ -25,7 +25,7 @@ class AdminCheck
                 return $next($request);
             }
         }
-        $response[] = APIHelpers::createAPIResponse(false, 401, 'Unauthorized Access', '');
+        $response[] = APIHelpers::createAPIResponse(false, 403, 'Forbidden Access', '');
         return response($response);
     }
 }

@@ -33,8 +33,8 @@ class CompanyController extends Controller
      *             @OA\Property(property="employerEmail", type="string", example="john@gmail.com", description="Email of Employer"),
      *             @OA\Property(property="employerPassword", type="string", example="password", description="Password of Employer"),
      *             @OA\Property(property="employerConfirmPassword", type="string", example="password", description="Confirm Password of Employer"),
-     *             @OA\Property(property="companyFullName", type="string", example="Tech Company", description="Full name of Company"),
-     *             @OA\Property(property="companyEmail", type="string", example="Tech Company", description="Email of Company"),
+     *             @OA\Property(property="companyName", type="string", example="Tech Company", description="Full name of Company"),
+     *             @OA\Property(property="companyEmail", type="string", example="company@email.com", description="Email of Company"),
      *             @OA\Property(property="companyAddress", type="string", example="Tech Company", description="Address of Company"),
      *             @OA\Property(property="companyPhone", type="string", example="Tech Company", description="Phone of Company"),
      *             @OA\Property(property="companyDescription", type="string", example="Tech Company", description="Description of Company"),
@@ -135,6 +135,7 @@ class CompanyController extends Controller
      *     path="/api/super-admin/company-activation",
      *     summary="Activate Company",
      *     tags={"Companies"},
+     *      security={ {"sanctum": {} }},
      *     @OA\RequestBody(
      *         @OA\JsonContent(
      *             type="object",

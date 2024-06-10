@@ -21,8 +21,8 @@ class JobController extends Controller
      * @OA\Get(
      *     path="/api/employer/job-listings",
      *     summary="Get list of jobs listed by employer",
-     *     tags={"JobListings"},
-     *      security={{"bearer_token":{}}},
+     *     tags={"Job Listings"},
+     * security={ {"sanctum": {} }},
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -74,7 +74,7 @@ class JobController extends Controller
      *     path="/api/employer/job-store",
      *     summary="Store job",
      *     tags={"Job Listings"},
-     *      security={{"bearer_token":{}}},
+     *      security={ {"sanctum": {} }},
      *     @OA\RequestBody(
      *         @OA\JsonContent(
      *             type="object",
@@ -155,7 +155,7 @@ class JobController extends Controller
      *     path="/api/employer/job-update",
      *     summary="Update job",
      *     tags={"Job Listings"},
-     *      security={{"bearer_token":{}}},
+     *      security={ {"sanctum": {} }},
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
@@ -219,7 +219,7 @@ class JobController extends Controller
             }
             $job = JobListing::where('id', $request->jobId)->firstOrFail();
             $job->title = $request->title;
-            $job->company_id = $check->id;
+            $job->company_id = $check->company_id;
             $job->description = $request->description;
             $job->application_instruction = $request->applicationInstruction;
             $job->save();
@@ -245,7 +245,7 @@ class JobController extends Controller
      *     path="/api/employer/job-delete",
      *     summary="Delete job",
      *     tags={"Job Listings"},
-     *      security={{"bearer_token":{}}},
+     *      security={ {"sanctum": {} }},
      *     @OA\RequestBody(
      *         @OA\JsonContent(
      *             type="object",
@@ -317,14 +317,14 @@ class JobController extends Controller
      * @OA\Get(
      *     path="/api/search",
      *     summary="Search job",
-     *     tags={"Job Listings"},
+     *     tags={"Job Listing Common Feature"},
      *     @OA\Parameter(
      *         name="keyword",
-     *         in="path",
+     *         in="query",
      *         description="keyword for searching the job",
      *         required=true,
      *         @OA\Schema(
-     *             type="integer"
+     *             type="string"
      *         )
      *     ),
      *     @OA\Response(
@@ -384,7 +384,16 @@ class JobController extends Controller
      * @OA\Get(
      *     path="/api/job-listings",
      *     summary="Get list of active jobs listed ",
-     *     tags={"JobListings"},
+     *     tags={"Job Listing Common Feature"},
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="page number for pagination",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
