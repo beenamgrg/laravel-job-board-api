@@ -21,7 +21,7 @@ class APIHelpers
 
         if ($is_error)
         {
-            $result['code'] = 500;
+            $result['code'] = $result['code'];
         }
         else
         {

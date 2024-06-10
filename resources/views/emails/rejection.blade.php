@@ -1,11 +1,11 @@
 <x-mail::message>
-Greetings {{$data['user']}},
+Greetings {{$data['applicant_name']}},
 
-Thank you for submitting your application and resume for our,{{$data['position']}} here at {{$data['company']}}. We deeply appreciate you taking the time to reach out to us. However, after reviewing your application, we have decided not to move forward with your application.
+Thank you for submitting your application and resume for our, {{$data['job_title']}} here at, {{$data['company_name']}}. We deeply appreciate you taking the time to reach out to us. However, after reviewing your application, we have decided not to move forward with your application.
 
 We want to thank you again for your interest in working with us and wish you the best of success in your future career endeavors.
 
 Thanks,<br>
-{{ Auth::user()->name }} 
-{{$data['company']}}
+{{$data['company_name']}}<br>
+{{ config('app.name') ?? 'laravel' }} 
 </x-mail::message>

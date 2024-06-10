@@ -8,8 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Helpers\APIHelpers;
 
-
-class AdminCheck
+class SuperAdminCheck
 {
     /**
      * Handle an incoming request.
@@ -20,7 +19,7 @@ class AdminCheck
     {
         if (Auth::check())
         {
-            if (Auth::user()->role == 'employer')
+            if (Auth::user()->role == 'super-admin')
             {
                 return $next($request);
             }

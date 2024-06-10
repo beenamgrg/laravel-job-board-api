@@ -4,14 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use OpenApi\Annotations as OA;
 
-/**
- * @OA\Schema()
- */
-
-
-class ListingLog extends Model
+class EmailLog extends Model
 {
     use HasFactory;
+    protected $fillable = ['id', 'recipient_email', 'relation', 'subject', 'sent_at'];
 }

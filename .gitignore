@@ -5,6 +5,7 @@
 /public/job-applications
 /public/storage
 /storage/*.key
+/storage/api-docs
 /vendor
 .env
 .env.backup

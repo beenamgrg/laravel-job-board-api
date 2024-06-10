@@ -1,11 +1,16 @@
 <x-mail::message>
-Hello ,
+Greetings {{$data['employerName']}},
 
-Your Order No has been placed successfully and is now being processed
+A new applicant, {{$data['applicantName']}}, with {{$data['applicantEmail']}} has applied to the position, ({{$data['jobTitle']}})that you have posted for your company, {{$data['companyName']}}
 
-You can view your order details using the link below.
+You can view the details below : <br>
+Coverletter : <br>
+{{$data['applicantCoverLetter']}}
+<br>
+<a href="{{url($data['applicantResume'])}}">Resume</a>
 
 
 Thanks,<br>
+ {{$data['companyName']}}<br>
 {{ config('app.name') ?? 'laravel' }} 
 </x-mail::message>

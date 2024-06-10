@@ -1,0 +1,1270 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Laravel API Documentation",
+        "description": "API documentation for Laravel application",
+        "contact": {
+            "email": "admin@example.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://127.0.0.1:8000"
+        }
+    ],
+    "paths": {
+        "/api/company-store": {
+            "post": {
+                "tags": [
+                    "Companies"
+                ],
+                "summary": "Company Store",
+                "operationId": "dbb67f351460391427aaa69ac1357f2b",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "employerFullName": {
+                                        "description": "Full Name of Employer",
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "employerEmail": {
+                                        "description": "Email of Employer",
+                                        "type": "string",
+                                        "example": "john@gmail.com"
+                                    },
+                                    "employerPassword": {
+                                        "description": "Password of Employer",
+                                        "type": "string",
+                                        "example": "password"
+                                    },
+                                    "employerConfirmPassword": {
+                                        "description": "Confirm Password of Employer",
+                                        "type": "string",
+                                        "example": "password"
+                                    },
+                                    "companyName": {
+                                        "description": "Full name of Company",
+                                        "type": "string",
+                                        "example": "Tech Company"
+                                    },
+                                    "companyEmail": {
+                                        "description": "Email of Company",
+                                        "type": "string",
+                                        "example": "company@email.com"
+                                    },
+                                    "companyAddress": {
+                                        "description": "Address of Company",
+                                        "type": "string",
+                                        "example": "Tech Company"
+                                    },
+                                    "companyPhone": {
+                                        "description": "Phone of Company",
+                                        "type": "string",
+                                        "example": "Tech Company"
+                                    },
+                                    "companyDescription": {
+                                        "description": "Description of Company",
+                                        "type": "string",
+                                        "example": "Tech Company"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "company_name": {
+                                            "description": "Name of Company",
+                                            "type": "string",
+                                            "example": "tech Company"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Unsucessful"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/api/super-admin/company-activation": {
+            "post": {
+                "tags": [
+                    "Companies"
+                ],
+                "summary": "Activate Company",
+                "operationId": "1db720af930e03b02fd343d90312e6da",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "companyId": {
+                                        "description": "Id of Company",
+                                        "type": "integer",
+                                        "example": "1"
+                                    },
+                                    "activationStatus": {
+                                        "description": "Activation Status of Company",
+                                        "type": "boolean",
+                                        "example": "0"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "employerId": {
+                                            "description": "Id of Employer",
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "employerEmail": {
+                                            "description": "Email of Employer",
+                                            "type": "string",
+                                            "example": "company@gmail.com"
+                                        },
+                                        "companyId": {
+                                            "description": "Id of Company",
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "companyStatus": {
+                                            "description": "Status of Company",
+                                            "type": "boolean",
+                                            "example": "1"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Unsucessful"
+                    },
+                    "400": {
+                        "description": "Repeated Action"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/submit-job-application": {
+            "post": {
+                "tags": [
+                    "Job Applications"
+                ],
+                "summary": "Submit job application",
+                "operationId": "926528e2f3e62fb88d6ac4c0accb3aed",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "jobId": {
+                                        "description": "Id of Job",
+                                        "type": "integer"
+                                    },
+                                    "resume": {
+                                        "description": "File to upload",
+                                        "type": "string",
+                                        "format": "binary"
+                                    },
+                                    "coverLetter": {
+                                        "description": "Cover letter for job",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "description": "Job Application Id",
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "user_id": {
+                                            "description": "Job Application Applicant Id",
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "job_id": {
+                                            "description": "Job Id",
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "resume": {
+                                            "description": "Job Applicant's Resume",
+                                            "type": "string",
+                                            "example": "laravel Developer"
+                                        },
+                                        "cover_letter": {
+                                            "description": "Job Applicant's Cover Letter",
+                                            "type": "string",
+                                            "example": "Firefly Tech"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Unsucessful"
+                    },
+                    "404": {
+                        "description": "Job not found"
+                    },
+                    "400": {
+                        "description": "Repeated Action"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/employer/job-applications": {
+            "get": {
+                "tags": [
+                    "Job Applications"
+                ],
+                "summary": "Employers get all active job submissions for its company",
+                "operationId": "a00005cc1315356be237fe0b84a6fa21",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "description": "Job Application Id",
+                                            "type": "integer",
+                                            "example": "2"
+                                        },
+                                        "resume": {
+                                            "description": "Job Applicant's Resume",
+                                            "type": "file",
+                                            "example": "Sample.pdf"
+                                        },
+                                        "cover_letter": {
+                                            "description": "Job Applicant's Coverletter",
+                                            "type": "string",
+                                            "example": "Develop and maintain software."
+                                        },
+                                        "user_id": {
+                                            "description": "Job Job Applicant's Id",
+                                            "type": "integer",
+                                            "example": "2"
+                                        },
+                                        "job_id": {
+                                            "description": "Job Application's Company Id",
+                                            "type": "integer",
+                                            "example": "2"
+                                        },
+                                        "is_approved": {
+                                            "description": "Job Application's Approval Status",
+                                            "type": "boolean",
+                                            "example": "0"
+                                        },
+                                        "is_rejected": {
+                                            "description": "Job Application's Rejection Status",
+                                            "type": "boolean",
+                                            "example": "0"
+                                        },
+                                        "status": {
+                                            "description": "Job Application's Status",
+                                            "type": "boolean",
+                                            "example": "1"
+                                        },
+                                        "job_title": {
+                                            "description": "Job Title",
+                                            "type": "string",
+                                            "example": "Laravel Developer"
+                                        },
+                                        "company": {
+                                            "description": "Job Application Company Name",
+                                            "type": "string",
+                                            "example": "Firefly Tech"
+                                        },
+                                        "company_email": {
+                                            "description": "Job Application Company Email",
+                                            "type": "string",
+                                            "example": "company@gmail.com"
+                                        },
+                                        "applicant_name": {
+                                            "description": "Job Application Applicant Name",
+                                            "type": "string",
+                                            "example": "seeker"
+                                        },
+                                        "applicant_email": {
+                                            "description": "Job Application Applicant Name",
+                                            "type": "string",
+                                            "example": "applicant@gmail.com"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/employer/job-application-approve": {
+            "post": {
+                "tags": [
+                    "Job Applications"
+                ],
+                "summary": "Approve the job-applications",
+                "operationId": "a0bbd9d6436b4418da46ea62ba827db9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "jobApplicationId": {
+                                        "type": "integer",
+                                        "example": "2"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "description": "Job Application Id",
+                                            "type": "integer",
+                                            "example": "2"
+                                        },
+                                        "resume": {
+                                            "description": "Job Application Resume",
+                                            "type": "file",
+                                            "example": "Sample.pdf"
+                                        },
+                                        "cover_letter": {
+                                            "description": "Job Application Coverletter",
+                                            "type": "string",
+                                            "example": "Develop and maintain software."
+                                        },
+                                        "user_id": {
+                                            "description": "Job Application Applicant Id",
+                                            "type": "integer",
+                                            "example": "2"
+                                        },
+                                        "job_id": {
+                                            "description": "Job Application Job Id",
+                                            "type": "integer",
+                                            "example": "2"
+                                        },
+                                        "is_approved": {
+                                            "description": "Job Application Approval Status",
+                                            "type": "boolean",
+                                            "example": "0"
+                                        },
+                                        "is_rejected": {
+                                            "description": "Job Application Rejection Status",
+                                            "type": "boolean",
+                                            "example": "0"
+                                        },
+                                        "status": {
+                                            "description": "Job Application Status",
+                                            "type": "boolean",
+                                            "example": "1"
+                                        },
+                                        "job_title": {
+                                            "description": "Job Application Job Title",
+                                            "type": "string",
+                                            "example": "Laravel Developer"
+                                        },
+                                        "company": {
+                                            "description": "Job's Company Name",
+                                            "type": "string",
+                                            "example": "Firefly Tech"
+                                        },
+                                        "company_email": {
+                                            "description": "Job's Company Email",
+                                            "type": "string",
+                                            "example": "company@gmail.com"
+                                        },
+                                        "applicant_name": {
+                                            "description": "Job Applicant Name",
+                                            "type": "string",
+                                            "example": "seeker"
+                                        },
+                                        "applicant_email": {
+                                            "description": "Job Applicant Email",
+                                            "type": "string",
+                                            "example": "applicant@gmail.com"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Unsucessful"
+                    },
+                    "403": {
+                        "description": "Forbidden Access"
+                    },
+                    "400": {
+                        "description": "Repeated Action"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/employer/job-application-reject": {
+            "post": {
+                "tags": [
+                    "Job Applications"
+                ],
+                "summary": "Reject the job-applications",
+                "operationId": "3d3e60049eaa211c40c042e36700313f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "jobApplicationId": {
+                                        "type": "integer",
+                                        "example": "2"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "description": "Job Application Id",
+                                            "type": "integer",
+                                            "example": "2"
+                                        },
+                                        "resume": {
+                                            "description": "Job Application Resume",
+                                            "type": "file",
+                                            "example": "Sample.pdf"
+                                        },
+                                        "cover_letter": {
+                                            "description": "Job Application Coverletter",
+                                            "type": "string",
+                                            "example": "Develop and maintain software."
+                                        },
+                                        "user_id": {
+                                            "description": "Job Application Applicant Id",
+                                            "type": "integer",
+                                            "example": "2"
+                                        },
+                                        "job_id": {
+                                            "description": "Job Application Job Id",
+                                            "type": "integer",
+                                            "example": "2"
+                                        },
+                                        "is_approved": {
+                                            "description": "Job Application Approval Status",
+                                            "type": "boolean",
+                                            "example": "0"
+                                        },
+                                        "is_rejected": {
+                                            "description": "Job Application Rejection Status",
+                                            "type": "boolean",
+                                            "example": "0"
+                                        },
+                                        "status": {
+                                            "description": "Job Application Status",
+                                            "type": "boolean",
+                                            "example": "1"
+                                        },
+                                        "job_title": {
+                                            "description": "Job Application Job Title",
+                                            "type": "string",
+                                            "example": "Laravel Developer"
+                                        },
+                                        "company": {
+                                            "description": "Job's Company Name",
+                                            "type": "string",
+                                            "example": "Firefly Tech"
+                                        },
+                                        "company_email": {
+                                            "description": "Job's Company Email",
+                                            "type": "string",
+                                            "example": "company@gmail.com"
+                                        },
+                                        "applicant_name": {
+                                            "description": "Job Applicant Name",
+                                            "type": "string",
+                                            "example": "seeker"
+                                        },
+                                        "applicant_email": {
+                                            "description": "Job Applicant Email",
+                                            "type": "string",
+                                            "example": "applicant@gmail.com"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Unsucessful"
+                    },
+                    "403": {
+                        "description": "Forbidden Access"
+                    },
+                    "400": {
+                        "description": "Repeated Action"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/employer/job-listings": {
+            "get": {
+                "tags": [
+                    "Job Listings"
+                ],
+                "summary": "Get list of jobs listed by employer",
+                "operationId": "d78b17d830ab3db40cffeeabb1efdd7e",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "description": "Job id",
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "title": {
+                                            "description": "Job title",
+                                            "type": "string",
+                                            "example": "laravel Developer"
+                                        },
+                                        "company_id": {
+                                            "description": "Job's company id",
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "descriptiion": {
+                                            "description": "Job Description",
+                                            "type": "string",
+                                            "example": "Description for job"
+                                        },
+                                        "application_instruction": {
+                                            "description": "Job Application Instruction",
+                                            "type": "string",
+                                            "example": "Instruction for Job"
+                                        },
+                                        "status": {
+                                            "description": "Job Status",
+                                            "type": "boolean",
+                                            "example": "j1"
+                                        },
+                                        "companyName": {
+                                            "description": "Company name of the job",
+                                            "type": "string",
+                                            "example": "Firefly Tech"
+                                        },
+                                        "companyAddress": {
+                                            "description": "Company address of the job",
+                                            "type": "string",
+                                            "example": "Pokhara"
+                                        },
+                                        "companyEmail": {
+                                            "description": "Company email of the job",
+                                            "type": "string",
+                                            "example": "johndoe@gmail.com"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/employer/job-store": {
+            "post": {
+                "tags": [
+                    "Job Listings"
+                ],
+                "summary": "Store job",
+                "operationId": "fe4133a708f85c258e2bc75d1fa60355",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "description": "Job title",
+                                        "type": "string",
+                                        "example": "Software Developer"
+                                    },
+                                    "description": {
+                                        "description": "Job Description",
+                                        "type": "string",
+                                        "example": "Develop and maintain software."
+                                    },
+                                    "applicationInstruction": {
+                                        "description": "Job applicatopn Instruction",
+                                        "type": "string",
+                                        "example": "Please apply through our website."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "description": "Job id",
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "title": {
+                                            "description": "Job Title",
+                                            "type": "string",
+                                            "example": "Software Developer"
+                                        },
+                                        "company_id": {
+                                            "description": "Job Company Id",
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "description": {
+                                            "description": "Job Description",
+                                            "type": "string",
+                                            "example": "Develop and maintain software."
+                                        },
+                                        "application_instruction": {
+                                            "description": "Job Application Instruction",
+                                            "type": "string",
+                                            "example": "Please apply through our website."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Unsucessful"
+                    },
+                    "403": {
+                        "description": "Forbidden Access"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/employer/job-update": {
+            "put": {
+                "tags": [
+                    "Job Listings"
+                ],
+                "summary": "Update job",
+                "operationId": "516fe8c1aec7db27419f5d56c16e7aab",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "jobId": {
+                                        "type": "integer",
+                                        "example": "1"
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Software Developer"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Develop and maintain software."
+                                    },
+                                    "applicationInstruction": {
+                                        "type": "string",
+                                        "example": "Please apply through our website."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "description": "Job id",
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "title": {
+                                            "description": "Job Title",
+                                            "type": "string",
+                                            "example": "Software Developer"
+                                        },
+                                        "company_id": {
+                                            "description": "Job Company Id",
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "description": {
+                                            "description": "Job Description",
+                                            "type": "string",
+                                            "example": "Develop and maintain software."
+                                        },
+                                        "application_instruction": {
+                                            "description": "Job Application Instruction",
+                                            "type": "string",
+                                            "example": "Please apply through our website."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Unsucessful"
+                    },
+                    "403": {
+                        "description": "Forbidden Access"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/employer/job-delete": {
+            "delete": {
+                "tags": [
+                    "Job Listings"
+                ],
+                "summary": "Delete job",
+                "operationId": "3e6af4359f4eebaf0fd944698be2030c",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "jobId": {
+                                        "description": "Job id",
+                                        "type": "integer",
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/JobListing"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Unsucessful"
+                    },
+                    "403": {
+                        "description": "Forbidden Access"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/search": {
+            "get": {
+                "tags": [
+                    "Job Listing Common Feature"
+                ],
+                "summary": "Search job",
+                "operationId": "ede72df90cbde0602dc57848fd14fa6a",
+                "parameters": [
+                    {
+                        "name": "keyword",
+                        "in": "query",
+                        "description": "keyword for searching the job",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "jobId": {
+                                            "description": "Job id",
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "title": {
+                                            "description": "Job Title",
+                                            "type": "string",
+                                            "example": "laravel Developer"
+                                        },
+                                        "companyName": {
+                                            "description": "Job Company Name",
+                                            "type": "string",
+                                            "example": "Firefly Tech"
+                                        },
+                                        "companyAddress": {
+                                            "description": "Job Company Address",
+                                            "type": "string",
+                                            "example": "Pokhara"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/api/job-listings": {
+            "get": {
+                "tags": [
+                    "Job Listing Common Feature"
+                ],
+                "summary": "Get list of active jobs listed ",
+                "operationId": "455704f96388d1718f9cac5a1711f231",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "page number for pagination",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "jobId": {
+                                            "description": "Job id",
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "title": {
+                                            "description": "Job Title",
+                                            "type": "string",
+                                            "example": "laravel Developer"
+                                        },
+                                        "jobDescription": {
+                                            "description": "Job Description",
+                                            "type": "string",
+                                            "example": "Description for job"
+                                        },
+                                        "applicationInstruction": {
+                                            "description": "Job Application Instruction",
+                                            "type": "string",
+                                            "example": "Instruction for Job"
+                                        },
+                                        "companyName": {
+                                            "description": "Job Company Name",
+                                            "type": "string",
+                                            "example": "Firefly Tech"
+                                        },
+                                        "companyAddress": {
+                                            "description": "Job Company Address",
+                                            "type": "string",
+                                            "example": "Pokhara"
+                                        },
+                                        "companyEmail": {
+                                            "description": "Job Company Email",
+                                            "type": "string",
+                                            "example": "firefly123@yopmail.com"
+                                        },
+                                        "status": {
+                                            "description": "Job Status",
+                                            "type": "boolean",
+                                            "example": "1"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    }
+                }
+            }
+        },
+        "/api/login": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User Login",
+                "operationId": "654c9c77f6a43ecf57770c25e8b7f72a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "description": "User Email",
+                                        "type": "string",
+                                        "example": "employer1@gmail.com"
+                                    },
+                                    "password": {
+                                        "description": "User Password",
+                                        "type": "string",
+                                        "example": "employer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "description": "User id",
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "name": {
+                                            "description": "User Name",
+                                            "type": "string",
+                                            "example": "John Doe"
+                                        },
+                                        "email": {
+                                            "description": "User Email",
+                                            "type": "string",
+                                            "example": "johndoe@gmail.com"
+                                        },
+                                        "role": {
+                                            "description": "User Role",
+                                            "type": "enum",
+                                            "example": "seeker"
+                                        },
+                                        "status": {
+                                            "description": "User Status",
+                                            "type": "boolean",
+                                            "example": "1"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Unsucessful"
+                    },
+                    "401": {
+                        "description": "Unauthorized"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/api/logout": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User Logout",
+                "operationId": "415fb58c249272fb5eaf7e362d067f5b",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/User"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/sign-up": {
+            "post": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "User Sign-up",
+                "operationId": "970f1c9f3a552227ccda06f6d98ba6fa",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "firstName": {
+                                        "description": "User firstName",
+                                        "type": "string",
+                                        "example": "John"
+                                    },
+                                    "lastName": {
+                                        "description": "User lastNamae",
+                                        "type": "string",
+                                        "example": "Doe"
+                                    },
+                                    "email": {
+                                        "description": "User email",
+                                        "type": "string",
+                                        "example": "johndoe@gmail.com"
+                                    },
+                                    "password": {
+                                        "description": "User password",
+                                        "type": "string",
+                                        "example": "employer"
+                                    },
+                                    "confirmPassword": {
+                                        "description": "User confirm password",
+                                        "type": "string",
+                                        "example": "employer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "description": "user id",
+                                            "type": "integer",
+                                            "example": "1"
+                                        },
+                                        "name": {
+                                            "type": "string",
+                                            "example": "John Doe"
+                                        },
+                                        "email": {
+                                            "type": "string",
+                                            "example": "johndoe@gmail.com"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation Unsucessful"
+                    },
+                    "500": {
+                        "description": "Internal Server Error"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Company": {},
+            "JobApplication": {},
+            "JobListing": {},
+            "ListingLog": {},
+            "User": {}
+        },
+        "securitySchemes": {
+            "sanctum": {
+                "type": "apiKey",
+                "description": "Enter token in format (Bearer <token>)",
+                "name": "Authorization",
+                "in": "header"
+            }
+        }
+    }
+}
