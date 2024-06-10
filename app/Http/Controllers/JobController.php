@@ -22,7 +22,16 @@ class JobController extends Controller
      *     path="/api/employer/job-listings",
      *     summary="Get list of jobs listed by employer",
      *     tags={"Job Listings"},
-     * security={ {"sanctum": {} }},
+     *      security={ {"sanctum": {} }},
+     *     @OA\Parameter(
+     *         name="page",
+     *         in="query",
+     *         description="page number for pagination",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="integer"
+     *         )
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -52,6 +61,8 @@ class JobController extends Controller
             $jobs = JobListing::select('job_listings.*', 'companies.name as companyName', 'companies.address as companyAddress', 'companies.email as companyEmail')
                 ->leftjoin('companies', 'companies.id', 'job_listings.company_id')
                 ->where('companies.employer_id', Auth::user()->id)
+                ->where('job_listings.deleted_at', NULL)
+                ->where('companies.deleted_at', NULL)
                 ->groupBy('job_listings.id', 'companies.id')
                 ->orderBy('job_listings.id', 'DESC')
                 ->paginate($paginate);
@@ -432,6 +443,9 @@ class JobController extends Controller
             $jobs = JobListing::select('job_listings.id as jobId', 'job_listings.title as title', 'job_listings.description as jobDescription', 'job_listings.application_instruction as applicationInstruction', 'job_listings.status as status', 'companies.name as companyName', 'companies.address as companyAddress', 'companies.email as companyEmail')
                 ->leftjoin('companies', 'companies.id', 'job_listings.company_id')
                 ->where('job_listings.status', 1)
+                ->where('job_listings.deleted_at', NULL)
+                ->where('companies.deleted_at', NULL)
+                ->where('users.deleted_at', NULL)
                 ->groupBy('job_listings.id', 'companies.id')
                 ->orderBy('job_listings.id', 'DESC')
                 ->paginate($paginate);
