@@ -941,6 +941,15 @@
                         "schema": {
                             "type": "string"
                         }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "page number",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
                     }
                 ],
                 "responses": {
@@ -1201,12 +1210,12 @@
                                     "password": {
                                         "description": "User password",
                                         "type": "string",
-                                        "example": "employer"
+                                        "example": "seeker"
                                     },
                                     "confirmPassword": {
                                         "description": "User confirm password",
                                         "type": "string",
-                                        "example": "employer"
+                                        "example": "seeker"
                                     }
                                 },
                                 "type": "object"

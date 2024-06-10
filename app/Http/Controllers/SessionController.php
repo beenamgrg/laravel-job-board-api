@@ -173,8 +173,8 @@ class SessionController extends Controller
      *             @OA\Property(property="firstName", type="string", example="John", description="User firstName"),
      *             @OA\Property(property="lastName", type="string", example="Doe", description="User lastNamae"),
      *             @OA\Property(property="email", type="string", example="johndoe@gmail.com", description="User email"),
-     *             @OA\Property(property="password", type="string", example="employer", description="User password"),
-     *             @OA\Property(property="confirmPassword", type="string", example="employer", description="User confirm password"),
+     *             @OA\Property(property="password", type="string", example="seeker", description="User password"),
+     *             @OA\Property(property="confirmPassword", type="string", example="seeker", description="User confirm password"),
      *      )
      *     ),
      *     @OA\Response(
