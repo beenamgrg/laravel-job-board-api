@@ -6,5 +6,5 @@ We have reviewed your application for your company, {{$data['companyName']}} reg
 
 
 Thanks,<br>
-{{ config('app.name') ?? 'laravel' }} 
+{{ config('app.name') ?? 'laravel' }} <br>
 </x-mail::message>

@@ -8,6 +8,6 @@ Feel free to contact us at {{$data['company_email']}} if you have any queries.
 
 
 Thanks,<br>
-{{$data['company_name']}}
+{{$data['company_name']}}<br>
 {{ config('app.name') ?? 'laravel' }} 
 </x-mail::message>

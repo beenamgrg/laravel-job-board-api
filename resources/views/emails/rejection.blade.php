@@ -6,6 +6,6 @@ Thank you for submitting your application and resume for our, {{$data['job_title
 We want to thank you again for your interest in working with us and wish you the best of success in your future career endeavors.
 
 Thanks,<br>
-{{$data['company_name']}}
+{{$data['company_name']}}<br>
 {{ config('app.name') ?? 'laravel' }} 
 </x-mail::message>

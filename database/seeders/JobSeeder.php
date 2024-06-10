@@ -85,5 +85,30 @@ class JobSeeder extends Seeder
                 ],
             ]
         );
+
+        DB::table('job_applications')->insert(
+            [
+                [
+                    'id' => 1,
+                    'resume' => '/job-applications/resume/1718009225.Zq1q.pdf',
+                    'cover_letter' => 'This is a sample cover letter',
+                    'user_id' => 3,
+                    'job_id' => 1,
+                    'is_approved' => 0,
+                    'is_rejected' => 0,
+
+                ],
+                [
+                    'id' => 2,
+                    'resume' => '/job-applications/resume/1718013550.KGk2.pdf',
+                    'cover_letter' => 'This is a sample cover letter',
+                    'user_id' => 6,
+                    'job_id' => 3,
+                    'is_approved' => 0,
+                    'is_rejected' => 0,
+
+                ],
+            ]
+        );
     }
 }

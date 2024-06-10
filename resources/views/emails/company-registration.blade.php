@@ -7,6 +7,6 @@ A new company named,{{$data['company_name']}} has registered for your service. T
 
 
 Thanks,<br>
-{{$data['company_name']}}
+{{$data['company_name']}}<br>
 {{ config('app.name') ?? env('APP_NAME') }} 
 </x-mail::message>
