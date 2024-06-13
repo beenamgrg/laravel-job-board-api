@@ -2,7 +2,7 @@
 /node_modules
 /public/build
 /public/hot
-/public/job-applications
+# /public/job-applications
 /public/storage
 /storage/*.key
 /storage/api-docs
