@@ -3,6 +3,8 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
+use App\Models\JobListing;
+
 
 
 class JobTest extends TestCase
@@ -24,31 +26,27 @@ class JobTest extends TestCase
     {
         parent::setUp();
 
-        // Act: Attempt to log in with the correct credentials
+        //User logs in as an employer for the data to be used throughout the file
         $user = $this->postJson('/api/login', [
             'email' => 'employer1@gmail.com',
             'password' => 'employer',
         ]);
-        // dd($user['data']);
-
-        // Assert: Check if the response is successful and contains a token
         $data = $user->json(['data']);
         $this->token = $user->json(['token']);
         $this->userName = $data['name'];
         $this->userId = $data['id'];
     }
 
-    //Testing fo getting  all the jobs posted by authorized employer
-    public function test_get_job_list()
+    //Action : Employer tries to get the list of all jobs posted by himself
+    public function test_employer_get_job_list()
     {
-        // $response = $this->getJson('/api/employer/job-listings'); // Replace with your actual endpoint
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->token,
             'Accept' => 'application/json',
         ])
             ->getJson('/api/employer/job-listings');
 
-        // Assert JSON structure and check for specific fields
+        // Assert: JSON structure and check for specific fields
         $response->assertJsonStructure([
             'code',
             'success',
@@ -69,9 +67,7 @@ class JobTest extends TestCase
                 'total',
             ]
         ]);
-
-
-        // Assert specific values in the response JSON
+        // Assert : specific values in the response JSON
         $response->assertJson([
             'code' => 200,
             'success' => true,
@@ -85,11 +81,9 @@ class JobTest extends TestCase
     }
 
 
-    //Testing for storing the jobs posted by authorized employer
-
-    public function test_store_job()
+    //Action : Employer tries to store a new job
+    public function test_employer_store_job()
     {
-        // Act: Attempt to store jobs with valid details
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->token,
             'Accept' => 'application/json',
@@ -101,8 +95,7 @@ class JobTest extends TestCase
                 'applicationInstruction' => 'This is for testing purpose',
             ]
         );
-        // Assert: Check if the response is successful and contains a token or user data
-        // dd($response);
+        // Assert: Check if the response is successful and contains data
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
@@ -111,9 +104,9 @@ class JobTest extends TestCase
             ]);
     }
 
-    public function test_store_jobs_without_title()
+    //Action : Employer tries to store a new job without title
+    public function test_employer_store_jobs_without_title()
     {
-        // Act: Attempt to store jobs without title
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->token,
             'Accept' => 'application/json',
@@ -124,8 +117,7 @@ class JobTest extends TestCase
                 'applicationInstruction' => 'This is for testing purpose',
             ]
         );
-        // Assert: Check if the response is successful and contains a token or user data
-        // dd($response);
+        // Assert: Check if the response has validation error with status code 422
         $response->assertStatus(422)
             ->assertJsonFragment([
                 'code' => 422,
@@ -135,13 +127,9 @@ class JobTest extends TestCase
                 ]
             ]);
     }
-
-
-    //Testing for  updating the jobs posted by authorized employer
-
-    public function test_update_job()
+    //Action : Employer update authorized job
+    public function test_employer_update_job()
     {
-        // Act: Attempt to update jobs with valid details
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->token,
             'Accept' => 'application/json',
@@ -154,8 +142,7 @@ class JobTest extends TestCase
                 'applicationInstruction' => 'This is for testing purpose',
             ]
         );
-        // Assert: Check if the response is successful and contains a token or user data
-        // dd($response);
+        // Assert: Check if the response is successful and contains data
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
@@ -163,10 +150,9 @@ class JobTest extends TestCase
                 ]
             ]);
     }
-
-    public function test_update_job_without_data()
+    //Action : Employer update authorized job without id
+    public function test_employer_update_job_without_data()
     {
-        // Act: Attempt to update jobs without providing job id
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->token,
             'Accept' => 'application/json',
@@ -178,8 +164,7 @@ class JobTest extends TestCase
                 'applicationInstruction' => 'This is for testing purpose',
             ]
         );
-        // Assert: Check if the response is successful and contains a token or user data
-        // dd($response);
+        // Assert: Check if the response returns validation error with 422
         $response->assertStatus(422)
             ->assertJsonFragment([
                 'code' => 422,
@@ -189,8 +174,8 @@ class JobTest extends TestCase
                 ]
             ]);
     }
-
-    public function test_update_unauthorized_job()
+    //Action : Employer update unauthorized
+    public function test_employer_update_unauthorized_job()
     {
         // Act: Attempt to update unauthorized jobs
         $response = $this->withHeaders([
@@ -205,8 +190,7 @@ class JobTest extends TestCase
                 'applicationInstruction' => 'This is for testing purpose',
             ]
         );
-        // Assert: Check if the response is successful and contains a token or user data
-        // dd($response);
+        // Assert: Check if the response is forbidden accen with 403
         $response->assertStatus(403)
             ->assertJson([
                 'code' => 403,
@@ -214,25 +198,28 @@ class JobTest extends TestCase
                 'message' => 'Forbidden Access',
             ]);
     }
-
-
-    //Testing for  updating the jobs posted by authorized employer
-
-    public function test_delete_job()
+    //Action : Employer delets job posted by himself
+    public function test_employer_delete_job()
     {
-        // Act: Attempt to store jobs with valid details
+        $job = JobListing::create(
+            [
+                'title' => 'Job Title',
+                'description' => 'test',
+                'application_instruction' => 'test',
+                'company_id' => 1
+
+            ]
+        );
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->token,
             'Accept' => 'application/json',
         ])->delete(
             '/api/employer/job-delete',
             [
-                'jobId' => 9,
+                'jobId' => $job->id,
             ]
         );
-        // Assert: Check if the response is successful and contains a token or user data
-        // dd($response);
-        // Assert: Check if the response indicates authentication failure
+        // Assert: Check if the response is successful
         $response->assertStatus(200)
             ->assertJson([
 
@@ -243,10 +230,9 @@ class JobTest extends TestCase
 
             ]);
     }
-
+//Action : Employer deletes unauthorized job
     public function test_delete_unauthorized_job()
     {
-        // Act: Attempt to store jobs with valid details
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->token,
             'Accept' => 'application/json',
@@ -256,9 +242,7 @@ class JobTest extends TestCase
                 'jobId' => 2,
             ]
         );
-        // Assert: Check if the response is successful and contains a token or user data
-        // dd($response);
-        // Assert: Check if the response indicates authentication failure
+        // Assert: Check if the response indicates authentication failure with status code 403
         $response->assertStatus(403)
             ->assertJson([
                 'code' => 403,

@@ -15,4 +15,10 @@ use OpenApi\Annotations as OA;
 class JobApplication extends Model
 {
     use HasFactory, SoftDeletes;
+    protected $fillable = [
+        'resume',
+        'cover_letter',
+        'user_id',
+        'job_id'
+    ];
 }

@@ -2,7 +2,14 @@
 
 namespace Tests\Unit;
 
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
+use Illuminate\Support\Facades\Storage;
+use App\Models\JobListing;
+use App\Models\JobApplication;
+use App\Models\User;
+use Faker\Factory as Faker;
+
 
 class EmployerJobApplicationTest extends TestCase
 {
@@ -16,41 +23,76 @@ class EmployerJobApplicationTest extends TestCase
     protected $token;
     protected $userName;
     protected $userId;
+    protected $job;
+    protected $jobApplication;
+    protected $newUser;
+
+
+    //Set up data that can be used within the file
     public function setUp(): void
     {
         parent::setUp();
 
-        // Act: Attempt to log in with the correct credentials
+        // Login using a exsiting credential of employer to get its token and other data 
         $user = $this->postJson('/api/login', [
             'email' => 'employer1@gmail.com',
             'password' => 'employer',
         ]);
-        // dd($user['data']);
-
-        // Assert: Check if the response is successful and contains a token
         $data = $user->json(['data']);
         $this->token = $user->json(['token']);
         $this->userName = $data['name'];
         $this->userId = $data['id'];
+
+        //create new job
+        $this->job = JobListing::create(
+            [
+                'title' => 'Job Title',
+                'description' => 'test',
+                'application_instruction' => 'test',
+                'company_id' => 1
+            ]
+        );
+
+        //Create new user
+        $faker = Faker::create();
+
+        // Act: Attempt to register with valid details
+        $this->newUser = User::create([
+            'name' => $faker->name,
+            'email' => $faker->email,
+            'password' => 'password123',
+            'confirmPassword' => 'password123',
+        ]);
+
+        //Create new job application
+        Storage::fake('public');
+        $file = UploadedFile::fake()->create('document.pdf', 100, 'application/pdf');
+        $this->jobApplication = JobApplication::create(
+            [
+                'title' => 'Job Title',
+                'description' => 'test',
+                'application_instruction' => 'test',
+                'job_id' => $this->job->id,
+                'user_id' => $this->newUser->id,
+                'resume' => $file
+            ]
+        );
     }
 
 
-    //Testing for approving the job-applicatiions posted by authorized employer
-
-    public function test_job_application_approve()
+    //Action : Test employer approve job application related to its company
+    public function test_employer_approve_job_application()
     {
-        // Act: Attempt to store jobs with valid details
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->token,
             'Accept' => 'application/json',
         ])->post(
             '/api/employer/job-application-approve',
             [
-                'jobApplicationId' => 1,
+                'jobApplicationId' => $this->jobApplication->id,
             ]
         );
-        // Assert: Check if the response is successful and contains a token or user data
-        // dd($response);
+        // Assert: Check if the response is successful and contains data 
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
@@ -59,11 +101,9 @@ class EmployerJobApplicationTest extends TestCase
             ]);
     }
 
-    //Testing for re-approving the job-applicatiions posted by authorized employer
-
-    public function test_job_application_approve_again()
+    //Action : Test employer approve job application already approved application related to its company
+    public function test_employer_approve_job_application_again()
     {
-        // Act: Attempt to store jobs with valid details
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->token,
             'Accept' => 'application/json',
@@ -73,8 +113,7 @@ class EmployerJobApplicationTest extends TestCase
                 'jobApplicationId' => 1,
             ]
         );
-        // Assert: Check if the response is successful and contains a token or user data
-        // Assert the JSON structure of the response
+        // Assert: Check if the response is repeated action with status code 400
         $response->assertStatus(400)
             ->assertJson([
                 'code' => 400,
@@ -83,22 +122,19 @@ class EmployerJobApplicationTest extends TestCase
             ]);
     }
 
-    //Testing for rejecting the job-applicatiions posted by authorized employer
-
-    public function test_job_application_reject()
+    //Action : Test employer reject job application related to its company
+    public function test_employer_reject_job_application()
     {
-        // Act: Attempt to store jobs with valid details
         $response = $this->withHeaders([
             'Authorization' => 'Bearer ' . $this->token,
             'Accept' => 'application/json',
         ])->post(
             '/api/employer/job-application-reject',
             [
-                'jobApplicationId' => 1,
+                'jobApplicationId' => $this->jobApplication->id,
             ]
         );
-        // Assert: Check if the response is successful and contains a token or user data
-        // dd($response);
+        // Assert: Check if the response is successful and contains data 
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
@@ -107,9 +143,8 @@ class EmployerJobApplicationTest extends TestCase
             ]);
     }
 
-    //Testing for re-rejecting the job-applicatiions posted by authorized employer
-
-    public function test_job_application_reject_again()
+    //Action : Test employer reject job application related to its company again
+    public function test_employer_reject_job_application_again()
     {
         // Act: Attempt to store jobs with valid details
         $response = $this->withHeaders([
@@ -121,8 +156,7 @@ class EmployerJobApplicationTest extends TestCase
                 'jobApplicationId' => 1,
             ]
         );
-        // Assert: Check if the response is successful and contains a token or user data
-        // Assert the JSON structure of the response
+        // Assert: Check if the response is repeated action with status code 400
         $response->assertStatus(400)
             ->assertJson([
                 'code' => 400,

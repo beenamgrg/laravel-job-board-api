@@ -3,8 +3,9 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
+use Faker\Factory as Faker;
 
-class AuthTest extends TestCase
+class AuthenticationTest extends TestCase
 {
     /**
      * A basic unit test example.
@@ -13,28 +14,29 @@ class AuthTest extends TestCase
     {
         $this->assertTrue(true);
     }
+
+     // Action :  Attempt to log in with the correct credentials
     public function test_login_with_valid_credentials()
     {
-        // Act: Attempt to log in with the correct credentials
         $response = $this->postJson('/api/login', [
             'email' => 'employer1@gmail.com',
             'password' => 'employer',
         ]);
 
-        // Assert: Check if the response is successful and contains a token
+        // Assert : Check if the response is successful and contains a token
         $response->assertStatus(200)
             ->assertJsonStructure(['token']);
     }
-    public function test_login_with_invalidvalid_credentials()
+
+    //Action : Test login using invalid credentials
+    public function test_login_with_invalid_credentials()
     {
-        // Act: Attempt to log in with the correct credentials
         $response = $this->postJson('/api/login', [
             'email' => 'employer1@gmail.com',
             'password' => 'wrongpassword',
         ]);
-        // dd($response);
 
-        // Assert: Check if the response indicates authentication failure
+        //Assert : Check if the response indicates authentication failure
         $response->assertStatus(401)
             ->assertJson([
                 [
@@ -45,19 +47,20 @@ class AuthTest extends TestCase
             ]);
     }
 
-    public function test_user_sign_up()
+    //Action : Test user sign up using correct credentials
+    public function test_user_sign_up_with_valid_credential()
     {
+        $faker = Faker::create();
         // Act: Attempt to register with valid details
         $response = $this->postJson('/api/sign-up', [
-            'firstName' => 'Test ',
-            'lastName' => 'User',
-            'email' => 'testuser6@example.com',
+            'firstName' => $faker->name,
+            'lastName' => $faker->name,
+            'email' => $faker->email,
             'password' => 'password123',
             'confirmPassword' => 'password123',
         ]);
-        // dd($response);
 
-        // Assert: Check if the response is successful and contains a token or user data
+        // Assert: Check if the response is successful and contains a token and user data
         $response->assertStatus(200)
             ->assertJsonStructure([
                 'data' => [
@@ -66,7 +69,9 @@ class AuthTest extends TestCase
                 'token'
             ]);
     }
-    public function test_user_cannot_register_with_missing_email()
+
+    //Action : Test user sign up with missing email
+    public function test_user_sign_up_with_missing_email()
     {
         $response = $this->postJson('/api/sign-up', [
             'firstName' => 'Test',
@@ -74,8 +79,8 @@ class AuthTest extends TestCase
             'password' => 'password123',
             'confirmPassword' => 'password123',
         ]);
-        // dd($response);
 
+        // Assert: Check if the the response returns validation error 422
         $response->assertStatus(422)
             ->assertJsonFragment([
                 'code' => 422,
@@ -86,7 +91,8 @@ class AuthTest extends TestCase
             ]);
     }
 
-    public function test_user_cannot_register_with_duplicate_email()
+    //Action : Test user sign up with duplicate email
+    public function test_user_sign_up_with_duplicate_email()
     {
         $response = $this->postJson('/api/sign-up', [
             'firstName' => 'Test',
@@ -96,6 +102,7 @@ class AuthTest extends TestCase
             'confirmPassword' => 'password123',
         ]);
 
+        // Assert: Check if the the response returns validation error 422
         $response->assertStatus(422)
             ->assertJsonFragment([
                 'code' => 422,

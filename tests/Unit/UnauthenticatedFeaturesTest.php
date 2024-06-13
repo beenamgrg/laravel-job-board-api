@@ -14,17 +14,10 @@ class UnauthenticatedFeaturesTest extends TestCase
     {
         $this->assertTrue(true);
     }
-
-    //Testing the non-authenticated users to list all the job-listings
-
+    //Action : Get list of all active jobs without authentication
     public function test_get_job_listings_without_authentication()
     {
-        $response = $this->getJson('/api/job-listings'); // Replace with your actual endpoint
-
-        // Assert that the response has a successful status code (200 OK)
-        $response->assertStatus(200);
-
-
+        $response = $this->getJson('/api/job-listings');
         // Assert JSON structure and check for specific fields
         $response->assertJsonStructure([
             'code',
@@ -57,29 +50,22 @@ class UnauthenticatedFeaturesTest extends TestCase
                 'total',
             ]
         ]);
-
         // Assert specific values in the response JSON
         $response->assertJson([
             'code' => 200,
             'success' => true,
             'message' => 'List of the active job submissions!!',
         ]);
-
         // Assert that the 'data' field is an array and contains at least one item
         $responseData = $response->json();
         $this->assertTrue(is_array($responseData['data']['data']));
         $this->assertNotEmpty($responseData['data']['data']);
     }
 
-    //Testing the non-authenticated users to search job with keyword provided
-
+    //Action : Unauthenticated users search for the jobs using specific keyword
     public function test_search_jobs()
     {
         $response = $this->getJson('api/search?keyword=' . 'ui');
-        // Assert that the response has a successful status code (200 OK)
-        $response->assertStatus(200);
-
-
         // Assert JSON structure and check for specific fields
         $response->assertJsonStructure([
             'code',
@@ -108,19 +94,15 @@ class UnauthenticatedFeaturesTest extends TestCase
                 'total',
             ]
         ]);
-
         // Assert specific values in the response JSON
         $response->assertJson([
             'code' => 200,
             'success' => true,
             'message' => 'Search Results:',
         ]);
-
         // Assert that the 'data' field is an array and contains at least one item
         $responseData = $response->json();
         $this->assertTrue(is_array($responseData['data']['data']));
         $this->assertNotEmpty($responseData['data']['data']);
     }
-
-
 }
