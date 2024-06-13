@@ -445,7 +445,6 @@ class JobController extends Controller
                 ->where('job_listings.status', 1)
                 ->where('job_listings.deleted_at', NULL)
                 ->where('companies.deleted_at', NULL)
-                ->where('users.deleted_at', NULL)
                 ->groupBy('job_listings.id', 'companies.id')
                 ->orderBy('job_listings.id', 'DESC')
                 ->paginate($paginate);
