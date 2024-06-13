@@ -90,19 +90,17 @@ class SessionController extends Controller
             }
             if (Auth::attempt($data))
             {
-                if (Auth::user()->status == 0)
+                $user = Auth::user();
+                if ($user->status == 0)
                 {
                     $response = APIHelpers::createAPIResponse(true, 401, 'Your account is not active. Please contact the administrator.', null);
                     return response()->json($response, 401);
                 }
-                if ($request->wantsJson())
-                {
-                    Auth::user()->tokens()->delete();
-                    $token = Auth::user()->createToken('jobBoard')->accessToken;
-                    $response = APIHelpers::createAPIResponse(false, 200, 'Successfully logged in', Auth::user());
-                    $response['token'] = $token;
-                    return response()->json($response, 200);
-                }
+                $user->tokens()->delete();
+                $token = $user->createToken('jobBoard')->accessToken;
+                $response = APIHelpers::createAPIResponse(false, 200, 'Successfully logged in', $user);
+                $response['token'] = $token;
+                return response()->json($response, 200);
             }
             else
             {
@@ -112,11 +110,8 @@ class SessionController extends Controller
         }
         catch (Exception $e)
         {
-            if ($request->wantsJson())
-            {
-                $response = APIHelpers::createAPIResponse(true, 500, $e->getMessage(), null);
-                return response()->json([$response], 500);
-            }
+            $response = APIHelpers::createAPIResponse(true, 500, $e->getMessage(), null);
+            return response()->json([$response], 500);
         }
     }
 
@@ -143,21 +138,16 @@ class SessionController extends Controller
     {
         try
         {
-            if ($request->wantsJson())
-            {
-                $token = Auth::user()->token();
-                $token->revoke();
-                $response = APIHelpers::createAPIResponse(false, 200, 'You have been successfully logged out!', NULL);
-                return response()->json($response, 200);
-            }
+            $token = Auth::user()->token();
+            $token->revoke();
+            $response = APIHelpers::createAPIResponse(false, 200, 'You have been successfully logged out!', NULL);
+            return response()->json($response, 200);
         }
         catch (Exception $e)
         {
-            if ($request->wantsJson())
-            {
-                $response = APIHelpers::createAPIResponse(true, 500, $e->getMessage(), null);
-                return response()->json([$response], 500);
-            }
+            dd($e->getMessage());
+            $response = APIHelpers::createAPIResponse(true, 500, $e->getMessage(), null);
+            return response()->json([$response], 500);
         }
     }
 
@@ -226,24 +216,18 @@ class SessionController extends Controller
                 'email' => $user->email,
                 'role' => $user->role,
             );
-            if ($request->wantsJson())
-            {
-                auth()->loginUsingId($user->id);
-                $token = Auth::user()->createToken('jobboard')->accessToken;
-                $response = APIHelpers::createAPIResponse(false, 200, 'Welcome to the job-board family', $data);
-                $response['token'] = $token;
-                DB::commit();
-                return response()->json($response, 200);
-            }
+            auth()->loginUsingId($user->id);
+            $token = Auth::user()->createToken('jobboard')->accessToken;
+            $response = APIHelpers::createAPIResponse(false, 200, 'Welcome to the job-board family', $data);
+            $response['token'] = $token;
+            DB::commit();
+            return response()->json($response, 200);
         }
         catch (Exception $e)
         {
             DB::rollBack();
-            if ($request->wantsJson())
-            {
-                $response = APIHelpers::createAPIResponse(true, 500, $e->getMessage(), null);
-                return response()->json([$response], 500);
-            }
+            $response = APIHelpers::createAPIResponse(true, 500, $e->getMessage(), null);
+            return response()->json([$response], 500);
         }
     }
 }

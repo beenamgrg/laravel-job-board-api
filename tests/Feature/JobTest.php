@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature;
 
 use Tests\TestCase;
 use App\Models\JobListing;
@@ -230,7 +230,7 @@ class JobTest extends TestCase
 
             ]);
     }
-//Action : Employer deletes unauthorized job
+    //Action : Employer deletes unauthorized job
     public function test_delete_unauthorized_job()
     {
         $response = $this->withHeaders([
