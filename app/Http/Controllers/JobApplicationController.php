@@ -303,7 +303,7 @@ class JobApplicationController extends Controller
             $data = JobApplication::select('job_applications.*', 'users.name as applicant_name', 'users.email as applicant_email', 'companies.name as company_name', 'companies.email as company_email', 'job_listings.title as job_title')
                 ->leftjoin('job_listings', 'job_listings.id', 'job_applications.job_id')
                 ->leftjoin('users', 'users.id', 'job_applications.user_id')
-                ->leftjoin('companies', 'companies.employer_id', 'users.id')
+                ->leftjoin('companies', 'job_listings.company_id', 'companies.id')
                 ->where('job_applications.id', $request->jobApplicationId)
                 ->first();
             // dd($data);

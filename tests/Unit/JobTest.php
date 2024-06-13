@@ -3,7 +3,6 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
-use App\Models\Company;
 
 
 class JobTest extends TestCase
@@ -39,7 +38,7 @@ class JobTest extends TestCase
         $this->userId = $data['id'];
     }
 
-    //Testing for geting all the jobs posted by authorized employer
+    //Testing fo getting  all the jobs posted by authorized employer
     public function test_get_job_list()
     {
         // $response = $this->getJson('/api/employer/job-listings'); // Replace with your actual endpoint
@@ -86,7 +85,7 @@ class JobTest extends TestCase
     }
 
 
-    //Testing for geting storing the jobs posted by authorized employer
+    //Testing for storing the jobs posted by authorized employer
 
     public function test_store_job()
     {
@@ -138,7 +137,7 @@ class JobTest extends TestCase
     }
 
 
-    //Testing for geting updating the jobs posted by authorized employer
+    //Testing for  updating the jobs posted by authorized employer
 
     public function test_update_job()
     {
@@ -217,7 +216,7 @@ class JobTest extends TestCase
     }
 
 
-    //Testing for geting updating the jobs posted by authorized employer
+    //Testing for  updating the jobs posted by authorized employer
 
     public function test_delete_job()
     {
