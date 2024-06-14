@@ -145,7 +145,6 @@ class SessionController extends Controller
         }
         catch (Exception $e)
         {
-            dd($e->getMessage());
             $response = APIHelpers::createAPIResponse(true, 500, $e->getMessage(), null);
             return response()->json([$response], 500);
         }
@@ -192,6 +191,7 @@ class SessionController extends Controller
         DB::beginTransaction();
         try
         {
+            // dd($request->all());
             $validator = Validator::make($request->all(), [
                 'firstName' => 'required',
                 'lastName' => 'required',

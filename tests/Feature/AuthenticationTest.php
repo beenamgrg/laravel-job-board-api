@@ -97,7 +97,7 @@ class AuthenticationTest extends TestCase
         $response = $this->postJson('/api/sign-up', [
             'firstName' => 'Test',
             'lastName' => 'User',
-            'email' => 'testuser1234@example.com',
+            'email' => 'employer1@gmail.com',
             'password' => 'password123',
             'confirmPassword' => 'password123',
         ]);

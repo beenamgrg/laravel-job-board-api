@@ -16,4 +16,12 @@ use OpenApi\Annotations as OA;
 class Company extends Model
 {
     use HasFactory, SoftDeletes;
+    protected $fillable = [
+        'name',
+        'email',
+        'slug',
+        'phone',
+        'description',
+        'address'
+    ];
 }
