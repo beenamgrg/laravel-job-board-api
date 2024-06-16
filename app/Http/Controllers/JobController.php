@@ -71,11 +71,8 @@ class JobController extends Controller
         }
         catch (Exception $e)
         {
-            if ($request->wantsJson())
-            {
-                $response = APIHelpers::createAPIResponse(true, 500, $e->getMessage(), null);
-                return response()->json([$response], 500);
-            }
+            $response = APIHelpers::createAPIResponse(true, 500, $e->getMessage(), null);
+            return response()->json([$response], 500);
         }
     }
 
@@ -152,11 +149,8 @@ class JobController extends Controller
         catch (Exception $e)
         {
             DB::rollBack();
-            if ($request->wantsJson())
-            {
-                $response = APIHelpers::createAPIResponse(true, 500, $e->getMessage(), null);
-                return response()->json([$response], 500);
-            }
+            $response = APIHelpers::createAPIResponse(true, 500, $e->getMessage(), null);
+            return response()->json([$response], 500);
         }
     }
 
@@ -242,11 +236,8 @@ class JobController extends Controller
         catch (Exception $e)
         {
             DB::rollBack();
-            if ($request->wantsJson())
-            {
-                $response = APIHelpers::createAPIResponse(true, 500, $e->getMessage(), null);
-                return response()->json([$response], 500);
-            }
+            $response = APIHelpers::createAPIResponse(true, 500, $e->getMessage(), null);
+            return response()->json([$response], 500);
         }
     }
 
@@ -312,11 +303,8 @@ class JobController extends Controller
         catch (Exception $e)
         {
             DB::rollBack();
-            if ($request->wantsJson())
-            {
-                $response = APIHelpers::createAPIResponse(true, 500, $e->getMessage(), null);
-                return response()->json([$response], 500);
-            }
+            $response = APIHelpers::createAPIResponse(true, 500, $e->getMessage(), null);
+            return response()->json([$response], 500);
         }
     }
 
@@ -391,11 +379,8 @@ class JobController extends Controller
         }
         catch (Exception $e)
         {
-            if ($request->wantsJson())
-            {
-                $response = APIHelpers::createAPIResponse(true, 500, $e->getMessage(), null);
-                return response()->json([$response], 500);
-            }
+            $response = APIHelpers::createAPIResponse(true, 500, $e->getMessage(), null);
+            return response()->json([$response], 500);
         }
     }
 
@@ -445,7 +430,6 @@ class JobController extends Controller
                 ->where('job_listings.status', 1)
                 ->where('job_listings.deleted_at', NULL)
                 ->where('companies.deleted_at', NULL)
-                ->where('users.deleted_at', NULL)
                 ->groupBy('job_listings.id', 'companies.id')
                 ->orderBy('job_listings.id', 'DESC')
                 ->paginate($paginate);
@@ -454,11 +438,8 @@ class JobController extends Controller
         }
         catch (Exception $e)
         {
-            if ($request->wantsJson())
-            {
-                $response = APIHelpers::createAPIResponse(true, 500, $e->getMessage(), null);
-                return response()->json([$response], 500);
-            }
+            $response = APIHelpers::createAPIResponse(true, 500, $e->getMessage(), null);
+            return response()->json([$response], 500);
         }
     }
 }
