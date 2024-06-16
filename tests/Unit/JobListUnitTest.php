@@ -3,14 +3,11 @@
 namespace Tests\Unit;
 
 use Tests\TestCase;
-use Faker\Factory as Faker;
-use Illuminate\Support\Facades\Hash;
 use App\Http\Controllers\JobController;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Company;
 use App\Models\Joblisting;
-use Illuminate\Support\Facades\Auth;
 
 class JobListUnitTest extends TestCase
 {
